@@ -46,6 +46,7 @@
   --color-bg-canvas-gradient-start: #000000;
   --color-bg-canvas-gradient-end: #424242;
   --color-bg-statusbar: #00000080;
+  --color-logo: #00ffc2;
   --blur-statusbar: 20px;
   --color-bg-surface: #333333;
   --color-bg-surface-translucent: #33333333;
@@ -91,6 +92,7 @@
   --color-bg-canvas-gradient-start: #ffffff;
   --color-bg-canvas-gradient-end: #f3f5f6;
   --color-bg-statusbar: #ffffffb8;
+  --color-logo: var(--color-icon-accent);
   --color-bg-surface: #ffffff;
   --color-bg-surface-translucent: #ffffffb8;
   --color-bg-placeholder: #e4e8eb;
@@ -440,6 +442,38 @@ body {
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* Loading screen (Figma "Loading screen" 39:1703) and the opening transition */
+.splash {
+  position: absolute; inset: 0; z-index: 26;
+  background: linear-gradient(var(--color-bg-canvas-gradient-start), var(--color-bg-canvas-gradient-end));
+  cursor: pointer;
+}
+.splash .logo { position: absolute; left: 152px; top: 403px; width: 126px; height: 126px; color: var(--color-logo); }
+.splash .logo svg { position: absolute; overflow: visible; }
+.splash .logo .core { left: 41px; top: 44px; transform-origin: 22px 19px; transform-box: fill-box; }
+.splash .glow {
+  position: absolute; left: 215px; top: 466px; width: 260px; height: 260px; margin: -130px 0 0 -130px; border-radius: 50%;
+  background: radial-gradient(closest-side, var(--glow-core), var(--glow-mid) 50%, var(--glow-edge));
+  opacity: 0; pointer-events: none;
+}
+.app.booting .splash .logo { animation: logo-in .7s cubic-bezier(.2,.8,.2,1) both; }
+.app.booting .splash .core { animation: core-pulse .9s ease-in-out .55s 2 both; }
+.app.booting .splash .glow { animation: glow-in 1.2s ease-out .3s both; }
+.app.leaving .splash { animation: splash-out .55s ease-in both; pointer-events: none; }
+.app.leaving .splash .logo { animation: logo-out .55s cubic-bezier(.5,0,.75,0) both; }
+.app.booting .screen:not([hidden]), .app.booting .tabbar, .app.booting .statusbar { opacity: 0; }
+.app.leaving .screen:not([hidden]) { animation: home-in .7s cubic-bezier(.2,.8,.2,1) .15s both; }
+.app.leaving .statusbar { animation: fade-in .5s ease .3s both; }
+.app.leaving .tabbar { animation: tab-in .6s cubic-bezier(.2,.8,.2,1) .3s both; }
+@keyframes logo-in { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: none; } }
+@keyframes core-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(.78); } }
+@keyframes glow-in { from { opacity: 0; transform: scale(.6); } to { opacity: .55; transform: none; } }
+@keyframes logo-out { to { opacity: 0; transform: scale(1.9); } }
+@keyframes splash-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes home-in { from { opacity: 0; transform: scale(1.05); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes tab-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
@@ -486,6 +520,7 @@ body {
         <button type="button" data-go="home">Kezdőlap</button>
         <button type="button" data-go="following">Követések</button>
         <button type="button" data-go="profile">Profilom</button>
+        <button type="button" id="replay">↻ App indítása újra</button>
       </div>
     </div>
     <div class="ctrl">
@@ -495,6 +530,7 @@ body {
         <li>Neked ajánlott / Követések váltó</li>
         <li>Követem gomb, szív, karusszel pöttyök</li>
         <li>Horgásztúra indítása a profilon</li>
+        <li>Indításkor betöltő képernyő, „App indítása újra” gombbal visszajátszható</li>
       </ul>
     </div>
     <p class="src">Forrás: Figma · Home / For You, Profile / Empty (Dark és Light). Felfedezés, Rögzítés és Eszközök még nincs megtervezve, ezek helyőrzők.</p>
@@ -650,6 +686,13 @@ body {
           <button class="tab press" role="tab" data-tab="devices" aria-selected="false"><svg class="ico" width="26" height="26"><use href="#i-device"/></svg><span class="lbl t-caption-small">Eszközök</span></button>
           <button class="tab press" role="tab" data-tab="profile" aria-selected="false"><svg class="ico" width="26" height="26"><use href="#i-person"/></svg><span class="lbl t-caption-small">Profilom</span></button>
         </nav>
+        <div class="splash" id="splash" hidden aria-label="Betöltés">
+          <div class="glow"></div>
+          <div class="logo" aria-hidden="true">
+            <svg width="126" height="126" viewBox="0 0 126 126"><path d="M126 69.3C126 69.3 117.894 74.025 112.05 85.05C106.204 95.2774 104.396 107.1 104.396 107.1C104.246 107.101 93.0727 107.197 81.9 111.825C70.7147 116.458 63.0854 125.894 63 126C62.9146 125.894 55.2853 116.458 44.1 111.825C32.9273 107.197 21.754 107.101 21.604 107.1C21.604 107.1 19.7955 95.2774 13.9504 85.05C8.10542 74.025 0 69.3 0 69.3L34.65 0V48.7913L26.3628 63L44.7366 94.5H81.2634L99.6373 63L91.35 48.7913V0L126 69.3Z" fill="currentColor"/></svg>
+            <svg class="core" width="44" height="38" viewBox="0 0 44 38"><path d="M44 19L33 38H11L0 19L11 0H33L44 19Z" fill="currentColor"/></svg>
+          </div>
+        </div>
         <div class="toast" id="toast" role="status" aria-live="polite"></div>
         <div class="home-indicator" aria-hidden="true"></div>
       </div>
@@ -858,7 +901,29 @@ body {
     toast((on ? 'Követed: ' : 'Már nem követed: ') + s.querySelector('.name').textContent);
   });
 
+  // Loading screen -> Home opening transition. Tap the splash to skip.
+  var splash = document.getElementById('splash');
+  var bootTimers = [];
+  function finishBoot() {
+    bootTimers.forEach(clearTimeout); bootTimers = [];
+    app.classList.remove('booting'); app.classList.add('leaving');
+    bootTimers.push(setTimeout(function () { app.classList.remove('leaving'); splash.hidden = true; }, 950));
+  }
+  function boot() {
+    bootTimers.forEach(clearTimeout); bootTimers = [];
+    go('home');
+    var s = document.querySelector('.screen:not([hidden])'); if (s) s.scrollTop = 0;
+    app.classList.remove('leaving', 'booting');
+    void app.offsetWidth;
+    splash.hidden = false; app.classList.add('booting');
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    bootTimers.push(setTimeout(finishBoot, reduce ? 600 : 2300));
+  }
+  splash.addEventListener('click', finishBoot);
+  document.getElementById('replay').addEventListener('click', boot);
+
   go('home');
+  boot();
 })();
 </script>
 
