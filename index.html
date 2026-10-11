@@ -139,43 +139,24 @@ body {
 .stage {
   min-height: 100%;
   display: flex;
-  gap: 40px;
-  align-items: center;
-  justify-content: center;
-  padding-block: 24px;
-  box-sizing: border-box;
-}
-.panel {
-  width: 260px;
-  display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
 }
-.panel h1 { margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.01em; }
-.panel h1 span { color: var(--stage-accent); }
-.panel p { margin: 0; color: var(--stage-muted); font-size: 13px; line-height: 20px; }
-.panel .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stage-muted); }
-.ctrl { display: flex; flex-direction: column; gap: 8px; }
 .switch {
-  display: inline-flex; padding: 4px; gap: 4px;
+  display: inline-flex; padding: 4px; gap: 4px; flex: none;
   border: 1px solid var(--stage-line); border-radius: 999px; background: var(--stage-panel);
-  width: max-content;
 }
 .switch button {
-  font: 500 13px/18px var(--font-ui); color: var(--stage-fg);
-  border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+  font: 600 15px/20px var(--font-ui); color: var(--stage-fg);
+  border: 0; background: transparent; padding: 8px 20px; border-radius: 999px; cursor: pointer;
+  transition: background-color .15s ease, color .15s ease;
 }
 .switch button[aria-pressed="true"] { background: var(--stage-fg); color: var(--stage-bg); }
-.switch button:focus-visible, .jump button:focus-visible { outline: 2px solid var(--stage-accent); outline-offset: 2px; }
-.jump { display: flex; flex-wrap: wrap; gap: 6px; }
-.jump button {
-  font: 400 12px/16px var(--font-ui); color: var(--stage-fg); cursor: pointer;
-  border: 1px solid var(--stage-line); background: transparent; padding: 6px 10px; border-radius: 8px;
-}
-.jump button[aria-current="true"] { border-color: var(--stage-fg); font-weight: 600; }
-.panel ul { margin: 0; padding-left: 18px; color: var(--stage-muted); font-size: 13px; line-height: 20px; display: grid; gap: 4px; }
-.panel .src { font-size: 11px; line-height: 16px; color: var(--stage-muted); border-top: 1px solid var(--stage-line); padding-top: 12px; }
+.switch button:focus-visible { outline: 2px solid var(--stage-accent); outline-offset: 2px; }
 
 .device-slot { flex: none; position: relative; }
 .device {
@@ -194,11 +175,6 @@ body {
 .device::after {
   content: ""; position: absolute; left: -3px; top: 190px; width: 3px; height: 130px; border-radius: 2px 0 0 2px; background: var(--bezel-edge);
   box-shadow: 0 -60px 0 -0px var(--bezel-edge);
-}
-
-@media (max-width: 760px) {
-  .stage { flex-direction: column; gap: 20px; align-items: center; }
-  .panel { width: 100%; max-width: 430px; }
 }
 
 /* ---------- App shell ---------- */
@@ -569,39 +545,10 @@ body {
 </svg>
 
 <main class="stage">
-  <section class="panel" aria-label="Prototípus vezérlők">
-    <div>
-      <h1>Vampire<span>.</span></h1>
-      <p>Kattintható iOS prototípus a Figma „Screens” oldal képernyőiből, a design system tokenjeivel.</p>
-    </div>
-    <div class="ctrl">
-      <span class="label">Téma</span>
-      <div class="switch" role="group" aria-label="App téma">
-        <button type="button" id="mode-dark" data-mode="dark" aria-pressed="true">Dark</button>
-        <button type="button" id="mode-light" data-mode="light" aria-pressed="false">Light</button>
-      </div>
-    </div>
-    <div class="ctrl">
-      <span class="label">Képernyő</span>
-      <div class="jump" id="jump">
-        <button type="button" data-go="home">Kezdőlap</button>
-        <button type="button" data-go="following">Követések</button>
-        <button type="button" data-go="profile">Profilom</button>
-        <button type="button" id="replay">↻ App indítása újra</button>
-      </div>
-    </div>
-    <div class="ctrl">
-      <span class="label">Próbáld ki</span>
-      <ul>
-        <li>Tab bar: öt fül, a fény követi az aktív fület</li>
-        <li>Neked ajánlott / Követések váltó</li>
-        <li>Követem gomb, szív, karusszel pöttyök</li>
-        <li>Horgásztúra indítása a profilon</li>
-        <li>Indításkor betöltő képernyő, „App indítása újra” gombbal visszajátszható</li>
-      </ul>
-    </div>
-    <p class="src">Forrás: Figma · Home / For You, Profile / Empty (Dark és Light). Felfedezés, Rögzítés és Eszközök még nincs megtervezve, ezek helyőrzők.</p>
-  </section>
+  <div class="switch" role="group" aria-label="App téma">
+    <button type="button" id="mode-dark" data-mode="dark" aria-pressed="true">Dark</button>
+    <button type="button" id="mode-light" data-mode="light" aria-pressed="false">Light</button>
+  </div>
 
   <div class="device-slot" id="slot">
     <div class="device" id="device">
@@ -853,9 +800,9 @@ body {
   // Fit the phone to the stage
   var W = 458, H = 960;
   function fit() {
-    var narrow = window.innerWidth <= 760;
-    var availW = Math.min(window.innerWidth - 32, 600);
-    var availH = narrow ? 99999 : window.innerHeight - 48;
+    // Phone always fits and stays centered under the theme switch
+    var availW = window.innerWidth - 32;
+    var availH = window.innerHeight - 48 - 20 - 50;
     var s = Math.min(1, availW / W, availH / H);
     s = Math.max(s, 0.3);
     device.style.transform = 'scale(' + s + ')';
@@ -1014,7 +961,6 @@ body {
     bootTimers.push(setTimeout(finishBoot, reduce ? 600 : 2300));
   }
   splash.addEventListener('click', finishBoot);
-  document.getElementById('replay').addEventListener('click', boot);
 
   // Map pins: tap selects the pin and slides up its tour card; tap again, close, or tap the map to dismiss
   var mapScreen = document.querySelector('.map-screen');
