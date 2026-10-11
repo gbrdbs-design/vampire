@@ -321,6 +321,8 @@ body {
   white-space: nowrap;
 }
 .btn-outline.on { background: var(--color-bg-accent) !important; border-color: var(--color-bg-accent) !important; color: var(--color-text-on-accent) !important; }
+/* Light mode: buttons use a solid brand-green fill instead of an outline */
+.app[data-mode="light"] .btn-outline { background: var(--color-bg-accent) !important; border-color: var(--color-bg-accent) !important; color: var(--color-text-on-accent) !important; }
 .more { color: var(--color-icon-primary) !important; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
 .title-block { display: flex; flex-direction: column; gap: var(--spacing-12); }
 .title-block h3 { margin: 0; color: var(--color-text-primary); text-wrap: balance; }
