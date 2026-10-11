@@ -217,8 +217,9 @@ body {
   box-sizing: border-box;
   scrollbar-width: none;
   opacity: 1; transition: opacity .18s ease;
-  /* Gradient/Background Viewport: black at the top of the visible screen, end color at its bottom, on every page */
-  background: linear-gradient(var(--color-bg-canvas-gradient-start), var(--color-bg-canvas-gradient-end));
+  /* Gradient/Background Viewport: fixed to the visible screen on every page. The start color holds under the
+     status bar, then the end color comes in at Home's pace (full run = Home's 2277px height) */
+  background: linear-gradient(var(--color-bg-canvas-gradient-start) 0, var(--color-bg-canvas-gradient-start) 220px, var(--color-bg-canvas-gradient-end) 2277px);
   background-attachment: scroll;
 }
 .screen::-webkit-scrollbar { display: none; }
