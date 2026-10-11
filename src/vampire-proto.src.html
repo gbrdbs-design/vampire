@@ -39,6 +39,9 @@
   --color-bg-canvas-gradient-end: #424242;
   --color-bg-statusbar: #00000080;
   --color-logo: #00ffc2;
+  --map-bg: #2e5a4a; --map-forest: #264c3e; --map-water: #1f3d66; --map-border: #9c88ba;
+  --map-place: #ffffff; --map-place-dot: #ffffff; --map-place-dot-stroke: #333333; --map-region: #bba8cc;
+  --map-pin: #333333; --map-pin-text: #ffffff; --map-attr: #ffffff; --map-attr-muted: #bac3c8;
   --blur-statusbar: 20px;
   --color-bg-surface: #333333;
   --color-bg-surface-translucent: #33333333;
@@ -84,6 +87,9 @@
   --color-bg-canvas-gradient-start: #ffffff;
   --color-bg-canvas-gradient-end: #f3f5f6;
   --color-bg-statusbar: #ffffffb8;
+  --map-bg: #e2eddb; --map-forest: #d3e5cb; --map-water: #aacdec; --map-border: #a68bc4;
+  --map-place: #141a1f; --map-place-dot: #141a1f; --map-place-dot-stroke: #ffffff; --map-region: #6e5590;
+  --map-pin: #ffffff; --map-pin-text: #141a1f; --map-attr: #141a1f; --map-attr-muted: #4b5661;
   --color-bg-surface: #ffffff;
   --color-bg-surface-translucent: #ffffffb8;
   --color-bg-placeholder: #e4e8eb;
@@ -437,6 +443,29 @@ body {
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
+/* Explore / Map (Figma 59:772 Dark, 59:1080 Light) */
+.screen.map-screen { padding: 0; overflow: hidden; background: var(--map-bg); }
+.map { position: absolute; inset: 0; }
+.map > svg { position: absolute; inset: 0; }
+.map-place, .map-region { position: absolute; display: flex; align-items: center; gap: 4px; font: var(--font-weight-medium) 10px/15px var(--font-family-primary); white-space: nowrap; pointer-events: none; }
+.map-place { color: var(--map-place); }
+.map-place::before { content: ""; width: 6px; height: 6px; border-radius: 50%; box-sizing: border-box; background: var(--map-place-dot); box-shadow: 0 0 0 1.5px var(--map-place-dot-stroke); }
+.map-region { color: var(--map-region); }
+.pin { position: absolute; width: 64px; height: 68px; padding: 0; border: 0; background: none; transform-origin: 32px 66px; }
+.pin .ptr { position: absolute; left: 24px; top: 57px; width: 16px; height: 11px; color: var(--map-pin); }
+.pin .av { position: absolute; left: 4px; top: 4px; width: 56px; height: 56px; box-sizing: border-box; border-radius: 50%; border: 3px solid var(--map-pin); background: var(--color-bg-avatar-placeholder, #d3d3d3) center/cover no-repeat; display: grid; place-items: center; font: var(--font-weight-semibold) 16px/24px var(--font-family-primary); color: #333333; transition: border-color .15s ease, box-shadow .15s ease; }
+.pin .cnt { position: absolute; left: 42px; top: 0; min-width: 22px; height: 22px; box-sizing: border-box; padding: 0 6px; border-radius: 999px; background: var(--map-pin); color: var(--map-pin-text); font: var(--font-weight-medium) 10px/22px var(--font-family-primary); text-align: center; }
+.pin .brand { position: absolute; left: 2px; top: 40px; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; background: var(--color-bg-accent); border: 1.5px solid var(--map-pin); color: #000; display: grid; place-items: center; }
+.pin.on { z-index: 2; }
+.pin.on .av { border-color: var(--color-bg-accent); box-shadow: 0 6px 18px #00000059; }
+.pin.on .ptr { color: var(--color-bg-accent); }
+.pin-st1 { background-image: url(__IMG_st1__) !important; } .pin-st2 { background-image: url(__IMG_st2__) !important; }
+.pin-st3 { background-image: url(__IMG_st3__) !important; } .pin-st4 { background-image: url(__IMG_st4__) !important; }
+.pin-st5 { background-image: url(__IMG_st5__) !important; } .pin-card { background-image: url(__IMG_card__) !important; }
+.map-filter { position: absolute; left: 356px; top: 81px; z-index: 3; }
+.map-attr { position: absolute; left: 24px; top: 812px; display: flex; gap: 8px; font: var(--font-weight-medium) 10px/15px var(--font-family-primary); color: var(--map-attr); }
+.map-attr span + span { color: var(--map-attr-muted); }
+
 /* Loading screen (Figma "Loading screen" 39:1703) and the opening transition */
 .splash {
   position: absolute; inset: 0; z-index: 26;
@@ -490,6 +519,7 @@ body {
     <symbol id="i-fish" viewBox="0 0 16 16"><path d="M2.33334 8C3.66668 6 5.66668 5 7.66668 5C9.66668 5 11.3333 6 12.3333 7L14 5.66667V10.3333L12.3333 9C11.3333 10 9.66668 11 7.66668 11C5.66668 11 3.66668 10 2.33334 8Z" fill="currentColor"/></symbol>
     <symbol id="i-fishing" viewBox="0 0 26 26"><path d="M7.58332 7.58333C8.77994 7.58333 9.74999 6.61328 9.74999 5.41667C9.74999 4.22005 8.77994 3.25 7.58332 3.25C6.38671 3.25 5.41666 4.22005 5.41666 5.41667C5.41666 6.61328 6.38671 7.58333 7.58332 7.58333Z" fill="currentColor"/><path d="M5.41666 9.20833H8.66666L9.53332 11.375L14.0833 8.66666L14.8417 9.85833L9.42499 13.5417V18.4167H5.41666V9.20833Z" fill="currentColor"/><path d="M9.75 11.9167L22.75 4.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.16666 21.125C3.79166 21.125 4.33332 20.0417 5.95832 20.0417C7.58332 20.0417 8.12499 21.125 9.74999 21.125C11.375 21.125 11.9167 20.0417 13.5417 20.0417C15.1667 20.0417 15.7083 21.125 17.3333 21.125C18.9583 21.125 19.5 20.0417 21.125 20.0417" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></symbol>
     <symbol id="i-heart" viewBox="0 0 28 28"><path class="heart-path" d="M14 23.3333C14 23.3333 5.25001 17.9667 3.26667 12.4833C1.86667 8.63333 4.31667 5.25 8.05001 5.25C10.3833 5.25 12.25 6.53333 14 8.75C15.75 6.53333 17.6167 5.25 19.95 5.25C23.6833 5.25 26.1333 8.63333 24.7333 12.4833C22.75 17.9667 14 23.3333 14 23.3333Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-filter" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6H13M19 6H21M3 12H5M11 12H21M3 18H13M19 18H21"/><circle cx="16" cy="6" r="2.5"/><circle cx="8" cy="12" r="2.5"/><circle cx="16" cy="18" r="2.5"/></g></symbol>
     <symbol id="i-home" viewBox="0 0 26 26"><path d="M26 14.3C26 14.3 24.3274 15.275 23.1213 17.55C21.9152 19.6604 21.542 22.1 21.542 22.1C21.5111 22.1002 19.2055 22.12 16.9 23.075C14.5919 24.031 13.0176 25.9782 13 26C12.9824 25.9782 11.4081 24.031 9.1 23.075C6.79451 22.12 4.48893 22.1002 4.45796 22.1C4.45796 22.1 4.08478 19.6604 2.87866 17.55C1.67255 15.275 0 14.3 0 14.3L7.15 0V10.068L5.43994 13L9.23136 19.5H16.7686L20.5601 13L18.85 10.068V0L26 14.3Z" fill="currentColor"/><path d="M17.5397 13L15.2699 16.9206H10.7302L8.46033 13L10.7302 9.07938H15.2699L17.5397 13Z" fill="currentColor"/></symbol>
     <symbol id="i-map" viewBox="0 0 26 26"><path d="M3.25 7.04167L9.20833 4.33333V19.5L3.25 22.2083V7.04167ZM10.6167 4.33333L15.3833 6.71667V21.8833L10.6167 19.5V4.33333ZM16.7917 6.71667L22.75 3.79167V18.9583L16.7917 21.8833V6.71667Z" fill="currentColor"/></symbol>
     <symbol id="i-more" viewBox="0 0 24 24"><path d="M16.9 12C16.9 13.1598 17.8402 14.1 19 14.1C20.1598 14.1 21.1 13.1598 21.1 12C21.1 10.8402 20.1598 9.90003 19 9.90003C17.8402 9.90003 16.9 10.8402 16.9 12Z" fill="currentColor"/><path d="M9.89998 12C9.89998 13.1598 10.8402 14.1 12 14.1C13.1598 14.1 14.1 13.1598 14.1 12C14.1 10.8402 13.1598 9.90003 12 9.90003C10.8402 9.90003 9.89998 10.8402 9.89998 12Z" fill="currentColor"/><path d="M2.89998 12C2.89998 13.1598 3.84018 14.1 4.99998 14.1C6.15977 14.1 7.09998 13.1598 7.09998 12C7.09998 10.8402 6.15977 9.90003 4.99998 9.90003C3.84018 9.90003 2.89998 10.8402 2.89998 12Z" fill="currentColor"/></symbol>
@@ -649,15 +679,28 @@ body {
         </section>
 
         <!-- Placeholders -->
-        <section class="screen" data-screen="explore" aria-label="Felfedezés" hidden>
-          <div class="stack gap-24">
-            <div class="navbar"><span class="spacer"></span><h1 class="t-title-large">Felfedezés</h1><span class="spacer"></span></div>
-            <div class="empty">
-              <svg class="ico ico-48" width="48" height="48"><use href="#i-map"/></svg>
-              <div class="text"><strong class="t-body-large-strong">Ez a képernyő még nincs megtervezve.</strong><span class="t-body-medium">Térkép és horgászhelyek kerülnek ide.</span></div>
-              <button class="btn-outline t-body-small press" data-go="home">Vissza a kezdőlapra</button>
-            </div>
+        <section class="screen map-screen" data-screen="explore" aria-label="Felfedezés" hidden>
+          <div class="map">
+            <svg width="430" height="932" viewBox="0 0 430 932" aria-hidden="true"><ellipse cx="70.191" cy="84.5069" rx="60" ry="30" transform="rotate(15 70.191 84.5069)" style="fill:var(--map-forest)"/><ellipse cx="329.938" cy="41.4447" rx="75" ry="35" transform="rotate(-10 329.938 41.4447)" style="fill:var(--map-forest)"/><ellipse cx="343.133" cy="222.303" rx="55" ry="25" transform="rotate(20 343.133 222.303)" style="fill:var(--map-forest)"/><ellipse cx="79.2362" cy="149.108" rx="45" ry="20" transform="rotate(-25 79.2362 149.108)" style="fill:var(--map-forest)"/><ellipse cx="214.595" cy="386.776" rx="70" ry="25" transform="rotate(10 214.595 386.776)" style="fill:var(--map-forest)"/><ellipse cx="393.301" cy="339.641" rx="50" ry="40" transform="rotate(-30 393.301 339.641)" style="fill:var(--map-forest)"/><ellipse cx="67.0142" cy="618.278" rx="60" ry="35" transform="rotate(-15 67.0142 618.278)" style="fill:var(--map-forest)"/><ellipse cx="250.218" cy="601.676" rx="45" ry="25" transform="rotate(25 250.218 601.676)" style="fill:var(--map-forest)"/><ellipse cx="376.751" cy="732.161" rx="70" ry="45" transform="rotate(-10 376.751 732.161)" style="fill:var(--map-forest)"/><ellipse cx="160.532" cy="801.919" rx="50" ry="30" transform="rotate(15 160.532 801.919)" style="fill:var(--map-forest)"/><ellipse cx="412.547" cy="812.8" rx="45" ry="30" transform="rotate(-20 412.547 812.8)" style="fill:var(--map-forest)"/>
+<path transform="translate(0 618)" d="M0 0C30 22 60 72 100 117C140 162 175 197 192 242C200 272 196 297 190 314H0V0Z" style="fill:var(--map-water)"/>
+<ellipse transform="translate(118 486)" cx="14.147" cy="6.09478" rx="15" ry="3.5" style="fill:var(--map-water)"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path transform="translate(30 398)" d="M1 1.00003C31 3.00003 61 7.00003 83 15C111 33 121 63 127 103C131 143 156 178 186 203C216 228 251 243 301 263C341 279 371 293 401 303" style="stroke:var(--map-water)" stroke-width="2"/>
+<path transform="translate(210 0)" d="M0.750122 300C20.7501 290 35.7501 270 45.7501 250C52.7501 225 50.7501 190 48.7501 160C46.7501 120 52.7501 80 60.7501 40L70.7501 0" style="stroke:var(--map-water)" stroke-width="1.5"/>
+<g style="stroke:var(--map-border)" stroke-width="1.2">
+<path transform="translate(0 262)" d="M0 0.600128C40 10.6001 90 28.6001 130 38.6001C165 50.6001 195 68.6001 240 60.6001C290 52.6001 330 68.6001 380 42.6001L430 30.6001"/>
+<path transform="translate(0 398.1)" d="M0 72.5017C30 80.5017 55 82.5017 72 80.5017C100 102.502 120 132.502 150 147.502C185 164.502 225 162.502 262 142.502C300 122.502 340 82.5017 362 42.5017C335 12.5017 300 -5.4983 270 2.5017C230 14.5017 190 30.5017 150 22.5017C118 22.5017 90 12.5017 60 2.5017"/>
+<path transform="translate(262 540)" d="M0.600098 0.600159C10.6001 40.6002 38.6001 80.6002 70.6001 122.6L100.6 180.6"/>
+<path transform="translate(0 560)" d="M0 0.600037C40 2.60004 90 20.6 140 22.6C172 42.6 192 90.6 220 140.6L242 200.6"/>
+<path transform="translate(332 646.78)" d="M0.600098 15.8196C40.6001 3.81955 70.6001 -4.18045 98.6001 3.81955"/>
+<path transform="translate(362 352)" d="M0.600098 88.6001C18.6001 48.6001 38.6001 18.6001 68.6001 0.600098"/>
+<path transform="translate(130 300)" d="M20.6 120.6C10.6 80.6 0.599976 40.6 0.599976 0.600006"/>
+</g></g></svg>
+            <span class="map-place" style="left:80px;top:109px">Poznan</span><span class="map-place" style="left:255px;top:125px">Varsó</span><span class="map-place" style="left:189px;top:159px">Łódź</span><span class="map-place" style="left:371px;top:136px">Breszt</span><span class="map-place" style="left:322px;top:194px">Lublin</span><span class="map-place" style="left:84px;top:204px">Wrocław</span><span class="map-place" style="left:209px;top:275px">Krakkó</span><span class="map-place" style="left:385px;top:290px">Lviv</span><span class="map-place" style="left:59px;top:333px">Brno</span><span class="map-place" style="left:49px;top:396px">Bécs</span><span class="map-place" style="left:39px;top:548px">Zágráb</span><span class="map-place" style="left:265px;top:551px">Timișoara</span><span class="map-place" style="left:231px;top:608px">Belgrád</span><span class="map-place" style="left:369px;top:638px">Craiova</span><span class="map-place" style="left:60px;top:686px">Split</span><span class="map-place" style="left:293px;top:698px">Niš</span><span class="map-place" style="left:262px;top:737px">Pristina</span><span class="map-place" style="left:355px;top:735px">Szófia</span><span class="map-place" style="left:180px;top:750px">Podgorica</span><span class="map-region" style="left:110px;top:129px">Lengyelország</span><span class="map-region" style="left:63px;top:650px">Bosznia-Hercegovina</span><span class="map-region" style="left:230px;top:657px">Szerbia</span><span class="map-region" style="left:142px;top:730px">Montenegró</span><span class="map-region" style="left:232px;top:798px">Észak-Macedónia</span><span class="map-region" style="left:192px;top:821px">Albánia</span><span class="map-region" style="left:385px;top:543px">Románia</span><span class="map-region" style="left:-9px;top:579px">Horvátország</span>
+            <button class="pin press" style="left:36px;top:256px" aria-label="Saját túrám: 6 fogás ezen a helyen" data-pin="Saját túrám: 6 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st1"></span><span class="cnt">6</span><span class="brand"><svg width="12" height="12"><use href="#i-vampire"/></svg></span></button><button class="pin press" style="left:72px;top:284px" aria-label="Kapás Vadász: 2 fogás ezen a helyen" data-pin="Kapás Vadász: 2 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st2"></span><span class="cnt">2</span></button><button class="pin press" style="left:141px;top:276px" aria-label="PR horgászhelye" data-pin="PR horgászhelye"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av">PR</span></button><button class="pin press" style="left:193px;top:321px" aria-label="KT horgászhelye" data-pin="KT horgászhelye"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av">kt</span><span class="brand"><svg width="12" height="12"><use href="#i-vampire"/></svg></span></button><button class="pin press" style="left:108px;top:344px" aria-label="Madár Zoli: 5 fogás ezen a helyen" data-pin="Madár Zoli: 5 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st3"></span><span class="cnt">5</span></button><button class="pin press" style="left:253px;top:381px" aria-label="Hajek Péter: 8 fogás ezen a helyen" data-pin="Hajek Péter: 8 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st4"></span><span class="cnt">8</span></button><button class="pin press" style="left:295px;top:380px" aria-label="Kiss Zoltán: 10 fogás ezen a helyen" data-pin="Kiss Zoltán: 10 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st5"></span><span class="cnt">10</span></button><button class="pin press" style="left:105px;top:412px" aria-label="Team Rebi Zoli: 12 fogás ezen a helyen" data-pin="Team Rebi Zoli: 12 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-card"></span><span class="cnt">12</span></button><button class="pin press" style="left:190px;top:442px" aria-label="Saját túrám: 58 fogás ezen a helyen" data-pin="Saját túrám: 58 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st1"></span><span class="cnt">58</span><span class="brand"><svg width="12" height="12"><use href="#i-vampire"/></svg></span></button><button class="pin press" style="left:304px;top:450px" aria-label="Kapás Vadász: 3 fogás ezen a helyen" data-pin="Kapás Vadász: 3 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st2"></span><span class="cnt">3</span><span class="brand"><svg width="12" height="12"><use href="#i-vampire"/></svg></span></button><button class="pin press" style="left:69px;top:456px" aria-label="Madár Zoli: 3 fogás ezen a helyen" data-pin="Madár Zoli: 3 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st3"></span><span class="cnt">3</span><span class="brand"><svg width="12" height="12"><use href="#i-vampire"/></svg></span></button><button class="pin press" style="left:250px;top:464px" aria-label="Hajek Péter: 9 fogás ezen a helyen" data-pin="Hajek Péter: 9 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st4"></span><span class="cnt">9</span></button><button class="pin press" style="left:376px;top:478px" aria-label="Kiss Zoltán: 2 fogás ezen a helyen" data-pin="Kiss Zoltán: 2 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st5"></span><span class="cnt">2</span></button><button class="pin press" style="left:183px;top:487px" aria-label="Team Rebi Zoli: 3 fogás ezen a helyen" data-pin="Team Rebi Zoli: 3 fogás ezen a helyen"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-card"></span><span class="cnt">3</span></button><button class="pin press" style="left:88px;top:492px" aria-label="PP horgászhelye" data-pin="PP horgászhelye"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av">PP</span></button><button class="pin press" style="left:146px;top:517px" aria-label="Saját túrám horgászhelye" data-pin="Saját túrám horgászhelye"><svg class="ptr" viewBox="0 0 16 11"><path d="M0 0H16L8 11Z" fill="currentColor"/></svg><span class="av pin-st1"></span></button>
           </div>
+          <button class="icon-btn press map-filter" aria-label="Szűrők" data-toast="A szűrők még nincsenek megtervezve"><svg class="ico" width="24" height="24"><use href="#i-filter"/></svg></button>
+          <div class="map-attr"><span>Térképek</span><span>Jogi</span></div>
         </section>
         <section class="screen" data-screen="record" aria-label="Rögzítés" hidden>
           <div class="stack gap-24">
@@ -922,6 +965,15 @@ body {
   }
   splash.addEventListener('click', finishBoot);
   document.getElementById('replay').addEventListener('click', boot);
+
+  // Map pins: tap selects the pin and shows what is there
+  document.querySelectorAll('[data-pin]').forEach(function (pin) {
+    pin.addEventListener('click', function () {
+      var was = pin.classList.contains('on');
+      document.querySelectorAll('.pin.on').forEach(function (p) { p.classList.remove('on'); });
+      if (!was) { pin.classList.add('on'); toast(pin.dataset.pin); }
+    });
+  });
 
   go('home');
   boot();
