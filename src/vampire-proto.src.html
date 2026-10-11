@@ -292,7 +292,7 @@ body {
 }
 .card-header { display: flex; align-items: center; gap: var(--spacing-10); }
 .author-avatar { width: 32px; height: 32px; position: relative; flex: none; }
-.author-avatar .ph { width: 32px; height: 32px; border-radius: 50%; background: var(--color-bg-avatar-placeholder); }
+.author-avatar .ph { display: block; width: 32px; height: 32px; border-radius: 50%; background: var(--color-bg-avatar-placeholder); object-fit: cover; }
 .author-avatar .badge { left: -2px; top: 19px; width: 15px; height: 15px; background: var(--color-bg-brand); color: var(--color-icon-on-brand); }
 .author { flex: 1; min-width: 0; color: var(--color-text-primary); }
 .btn-outline {
@@ -748,7 +748,7 @@ body {
   <article class="card">
     <div class="card-header">
       <span class="author-avatar"><span class="ph" style="display:block"></span><span class="badge"><svg class="ico" width="12" height="12"><use href="#i-vampire"/></svg></span></span>
-      <span class="author t-body-large">Team Rebi Zoli</span>
+      <span class="author t-body-large">Rebi Zoli</span>
       <button class="btn-outline t-body-small press" data-follow><span class="txt">Követem</span><svg class="ico" width="20" height="20"><use href="#i-plus"/></svg></button>
       <button class="more press" aria-label="Továbbiak" data-toast="Túra menü hamarosan"><svg class="ico" width="24" height="24"><use href="#i-more"/></svg></button>
     </div>
@@ -798,7 +798,21 @@ body {
   // Feed cards (3, as in Figma)
   var feed = document.getElementById('feed');
   var tpl = document.getElementById('card-tpl');
-  for (var i = 0; i < 3; i++) feed.appendChild(tpl.content.cloneNode(true));
+  // Per-card author, photo and copy from Figma Home 1:2
+  var cards = [
+    { author: 'Rebi Zoli', avatar: '__IMG_av1__', title: 'Horgásztúra Dunavarsány közelében', date: '2026. okt. 9–10.', photo: '__IMG_card__' },
+    { author: 'Madár Zoli', avatar: '__IMG_av2__', title: 'Horgásztúra Szolnok közelében', date: '2026. okt. 8-9.', photo: '__IMG_card2__' },
+    { author: 'László Petra', avatar: '__IMG_av3__', title: 'Palocsa horgásztó', date: '2026. okt. 5-7.', photo: '__IMG_card3__' }
+  ];
+  cards.forEach(function (c) {
+    var n = tpl.content.cloneNode(true);
+    n.querySelector('.author').textContent = c.author;
+    n.querySelector('.author-avatar .ph').outerHTML = '<img class="ph" src="' + c.avatar + '" alt="">';
+    n.querySelector('.title-block h3').textContent = c.title;
+    n.querySelector('.title-block .date').textContent = c.date;
+    n.querySelectorAll('.slide img').forEach(function (im) { im.src = c.photo; });
+    feed.appendChild(n);
+  });
 
   // Fit the phone to the stage
   var W = 458, H = 960;
@@ -906,20 +920,21 @@ body {
   });
   setSeg('foryou');
 
-  // Follow buttons (all cards are by the same team, so they stay in sync)
-  var following = false;
-  function syncFollow() {
-    document.querySelectorAll('[data-follow]').forEach(function (b) {
-      b.classList.toggle('on', following);
-      b.querySelector('.txt').textContent = following ? 'Követed' : 'Követem';
-      b.querySelector('use').setAttribute('href', following ? '#i-check' : '#i-plus');
-      b.setAttribute('aria-pressed', String(following));
-    });
-    document.getElementById('following-count').textContent = following ? '1' : '0';
+  // Follow buttons: one per author
+  function syncFollow(b, on) {
+    b.classList.toggle('on', on);
+    b.querySelector('.txt').textContent = on ? 'Követed' : 'Követem';
+    b.querySelector('use').setAttribute('href', on ? '#i-check' : '#i-plus');
+    b.setAttribute('aria-pressed', String(on));
+    document.getElementById('following-count').textContent = String(feed.querySelectorAll('[data-follow].on').length);
   }
   feed.addEventListener('click', function (e) {
     var f = e.target.closest('[data-follow]');
-    if (f) { following = !following; syncFollow(); toast(following ? 'Követed: Team Rebi Zoli' : 'Már nem követed'); return; }
+    if (f) {
+      var on = !f.classList.contains('on'); syncFollow(f, on);
+      toast(on ? 'Követed: ' + f.closest('.card').querySelector('.author').textContent : 'Már nem követed');
+      return;
+    }
     var l = e.target.closest('[data-like]');
     if (l) {
       var on = l.getAttribute('aria-pressed') !== 'true';
@@ -933,7 +948,6 @@ body {
     var dot = e.target.closest('.pagination button');
     if (dot) { showSlide(dot.closest('.carousel'), Array.prototype.indexOf.call(dot.parentNode.children, dot)); }
   });
-  syncFollow();
 
   // Carousel: dots + horizontal drag/swipe
   function showSlide(c, i) {
