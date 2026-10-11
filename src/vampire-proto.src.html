@@ -209,9 +209,9 @@ body {
   box-sizing: border-box;
   scrollbar-width: none;
   opacity: 1; transition: opacity .18s ease;
-  /* Gradient/Background: top-to-bottom over the full scroll height, like the Figma frames */
+  /* Gradient/Background Viewport: black at the top of the visible screen, end color at its bottom, on every page */
   background: linear-gradient(var(--color-bg-canvas-gradient-start), var(--color-bg-canvas-gradient-end));
-  background-attachment: local;
+  background-attachment: scroll;
 }
 .screen::-webkit-scrollbar { display: none; }
 .screen[hidden] { display: none !important; }
@@ -391,24 +391,33 @@ body {
   border: var(--border-width-thin) solid var(--color-border-default);
   border-radius: var(--radius-full);
   background:
-    radial-gradient(ellipse 199px 67px at var(--glow-x, 50%) 100%, var(--color-glow-accent-core) 0%, var(--color-glow-accent-mid) 50%, var(--color-glow-accent-edge) 100%),
+    radial-gradient(ellipse var(--glow-w) var(--glow-h) at var(--glow-x, 50%) 100%, var(--color-glow-accent-core) 0%, var(--color-glow-accent-mid) 50%, var(--color-glow-accent-edge) 100%),
     var(--color-bg-surface-translucent);
   -webkit-backdrop-filter: blur(8px) saturate(1.2);
   backdrop-filter: blur(8px) saturate(1.2);
   box-shadow: 0 6px 20px var(--color-alpha-black-35);
-  transition: --glow-x .3s ease;
+  transition: --glow-x .3s ease, --glow-w .38s var(--ease-bar), --glow-h .38s var(--ease-bar),
+    left .38s var(--ease-bar), top .38s var(--ease-bar), width .38s var(--ease-bar), height .38s var(--ease-bar);
+  --ease-bar: cubic-bezier(.3,.7,.2,1);
 }
+/* Size=Compact (Figma 75:1620): icons only, 278×48, centered, same bottom edge. Scrolling down switches to it, scrolling up restores Size=Default (24:519) */
+.tabbar.compact { left: 76px; top: 857px; width: 278px; height: 48px; --glow-w: 139px; --glow-h: 48px; }
 .tab {
   width: 74px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-4);
   padding: var(--spacing-6) 0; border-radius: var(--radius-full);
   color: var(--color-icon-tertiary) !important;
 }
-.tab .lbl { color: var(--color-text-tertiary); white-space: nowrap; }
+.tab .lbl { color: var(--color-text-tertiary); white-space: nowrap; max-height: 15px; overflow: hidden; transition: opacity .2s ease, max-height .38s var(--ease-bar), color .15s ease; }
+.tab { transition: width .38s var(--ease-bar), gap .38s var(--ease-bar), padding .38s var(--ease-bar), transform .12s ease, filter .12s ease, color .15s ease; }
+.tabbar.compact .tab { width: 52px; gap: 0; padding: 0; }
+.tabbar.compact .lbl { opacity: 0; max-height: 0; transition: opacity .12s ease, max-height .38s var(--ease-bar), color .15s ease; }
 .tab[aria-selected="true"] { color: var(--color-icon-accent) !important; }
 .tab[aria-selected="true"] .lbl { color: var(--color-text-accent); }
 /* Home tab icon is the brand mark: brand color when active (Figma Tab / Home) */
 .tab[data-tab="home"][aria-selected="true"] .ico { color: var(--color-logo); }
 @property --glow-x { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+@property --glow-w { syntax: "<length>"; inherits: false; initial-value: 199px; }
+@property --glow-h { syntax: "<length>"; inherits: false; initial-value: 67px; }
 
 /* Toast */
 .toast {
@@ -841,14 +850,32 @@ body {
       current = name;
     }
     document.querySelectorAll('.tab').forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.tab === name)); });
-    var idx = tabs.indexOf(name);
-    tabbar.style.setProperty('--glow-x', (((idx * 74 + 37 + 8) / 398) * 100).toFixed(1) + '%');
+    setCompact(false);
     if (seg) setSeg(seg);
     document.querySelectorAll('#jump button').forEach(function (b) {
       var on = b.dataset.go === (name === 'home' ? (document.getElementById('seg-following').getAttribute('aria-selected') === 'true' ? 'following' : 'home') : name);
       b.setAttribute('aria-current', String(on));
     });
   }
+  // Tab bar: compact while scrolling down, full when scrolling up or near the top
+  function placeGlow() {
+    var idx = tabs.indexOf(current), c = tabbar.classList.contains('compact');
+    var w = c ? 52 : 74, total = c ? 278 : 398;
+    tabbar.style.setProperty('--glow-x', (((idx * w + w / 2 + 8) / total) * 100).toFixed(1) + '%');
+  }
+  function setCompact(on) { tabbar.classList.toggle('compact', on); placeGlow(); }
+  var lastY = new WeakMap();
+  app.addEventListener('scroll', function (e) {
+    var s = e.target;
+    if (!s.classList || !s.classList.contains('screen')) return;
+    var y = s.scrollTop, prev = lastY.has(s) ? lastY.get(s) : 0, d = y - prev;
+    if (y < 24) setCompact(false);
+    else if (d > 6) setCompact(true);
+    else if (d < -6) setCompact(false);
+    else return;
+    lastY.set(s, y);
+  }, true);
+
   document.querySelectorAll('.tab').forEach(function (t) {
     t.addEventListener('click', function () { go(t.dataset.tab); });
   });
