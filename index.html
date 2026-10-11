@@ -444,8 +444,12 @@ body {
 /* Loading screen (Figma "Loading screen" 39:1703) and the opening transition */
 .splash {
   position: absolute; inset: 0; z-index: 26;
-  background: linear-gradient(var(--color-bg-canvas-gradient-start), var(--color-bg-canvas-gradient-end));
   cursor: pointer;
+}
+/* Background is its own layer so it can fade before the logo */
+.splash::before {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(var(--color-bg-canvas-gradient-start), var(--color-bg-canvas-gradient-end));
 }
 .splash .logo { position: absolute; left: 152px; top: 403px; width: 126px; height: 126px; color: var(--color-logo); }
 .splash .logo svg { position: absolute; overflow: visible; }
@@ -458,12 +462,14 @@ body {
 .app.booting .splash .logo { animation: logo-in .7s cubic-bezier(.2,.8,.2,1) both; }
 .app.booting .splash .core { animation: core-pulse .9s ease-in-out .55s 2 both; }
 .app.booting .splash .glow { animation: glow-in 1.2s ease-out .3s both; }
-.app.leaving .splash { animation: splash-out .55s ease-in both; pointer-events: none; }
-.app.leaving .splash .logo { animation: logo-out .55s cubic-bezier(.5,0,.75,0) both; }
+.app.leaving .splash { pointer-events: none; }
+.app.leaving .splash::before { animation: splash-out .5s ease-in both; }
+.app.leaving .splash .glow { animation: splash-out .3s ease-in both; }
+.app.leaving .splash .logo { animation: logo-out .5s cubic-bezier(.5,0,.75,0) .55s both; }
 .app.booting .screen:not([hidden]), .app.booting .tabbar, .app.booting .statusbar { opacity: 0; }
-.app.leaving .screen:not([hidden]) { animation: home-in .7s cubic-bezier(.2,.8,.2,1) .15s both; }
-.app.leaving .statusbar { animation: fade-in .5s ease .3s both; }
-.app.leaving .tabbar { animation: tab-in .6s cubic-bezier(.2,.8,.2,1) .3s both; }
+.app.leaving .screen:not([hidden]) { animation: home-in .6s cubic-bezier(.2,.8,.2,1) both; }
+.app.leaving .statusbar { animation: fade-in .5s ease .2s both; }
+.app.leaving .tabbar { animation: tab-in .6s cubic-bezier(.2,.8,.2,1) .2s both; }
 @keyframes logo-in { from { opacity: 0; transform: scale(.72); } to { opacity: 1; transform: none; } }
 @keyframes core-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(.78); } }
 @keyframes glow-in { from { opacity: 0; transform: scale(.6); } to { opacity: .55; transform: none; } }
@@ -906,7 +912,7 @@ body {
   function finishBoot() {
     bootTimers.forEach(clearTimeout); bootTimers = [];
     app.classList.remove('booting'); app.classList.add('leaving');
-    bootTimers.push(setTimeout(function () { app.classList.remove('leaving'); splash.hidden = true; }, 950));
+    bootTimers.push(setTimeout(function () { app.classList.remove('leaving'); splash.hidden = true; }, 1150));
   }
   function boot() {
     bootTimers.forEach(clearTimeout); bootTimers = [];
