@@ -45,6 +45,8 @@
   --color-bg-canvas: #212121;
   --color-bg-canvas-gradient-start: #000000;
   --color-bg-canvas-gradient-end: #424242;
+  --color-bg-statusbar: #00000099;
+  --blur-statusbar: 16px;
   --color-bg-surface: #333333;
   --color-bg-surface-translucent: #33333333;
   --color-bg-accent: #57fec1;
@@ -88,6 +90,7 @@
   --color-bg-canvas: #f3f5f6;
   --color-bg-canvas-gradient-start: #ffffff;
   --color-bg-canvas-gradient-end: #f3f5f6;
+  --color-bg-statusbar: #ffffffb8;
   --color-bg-surface: #ffffff;
   --color-bg-surface-translucent: #ffffffb8;
   --color-bg-placeholder: #e4e8eb;
@@ -212,7 +215,9 @@ body {
 .statusbar {
   position: absolute; inset: 0 0 auto 0; height: 65px; z-index: 20;
   color: var(--color-icon-primary);
-  background: linear-gradient(var(--color-bg-canvas-gradient-start) 70%, transparent);
+  background: var(--color-bg-statusbar);
+  -webkit-backdrop-filter: blur(var(--blur-statusbar)) saturate(1.4);
+  backdrop-filter: blur(var(--blur-statusbar)) saturate(1.4);
   pointer-events: none;
 }
 .statusbar .time { position: absolute; left: 57px; top: 22px; font: 600 17px/22px var(--font-sys); color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
