@@ -1,0 +1,843 @@
+<title>Vampire app prototípus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: quiet stage with a scaled iPhone mockup; app colors come from the Figma "Color" collection (Dark / Light modes). */
+
+/* ---------- Stage (outer page) — follows the viewer's theme ---------- */
+:root {
+  --stage-bg: #e9eceb;
+  --stage-panel: #f7f9f8;
+  --stage-fg: #141a1f;
+  --stage-muted: #56616a;
+  --stage-line: #d3d9d7;
+  --stage-accent: #007a55;
+  --bezel: #2b2f31;
+  --bezel-edge: #4a5054;
+  --font-ui: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sys: -apple-system, "SF Pro Text", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --stage-bg: #141716; --stage-panel: #1c201f; --stage-fg: #eef2f1; --stage-muted: #9aa5a2;
+    --stage-line: #2c3231; --stage-accent: #57fec1; --bezel: #0b0c0d; --bezel-edge: #3a4044;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --stage-bg: #141716; --stage-panel: #1c201f; --stage-fg: #eef2f1; --stage-muted: #9aa5a2;
+  --stage-line: #2c3231; --stage-accent: #57fec1; --bezel: #0b0c0d; --bezel-edge: #3a4044;
+  color-scheme: dark;
+}
+
+/* ---------- App tokens (Figma: Color / Dimension / Typography) ---------- */
+.app {
+  /* Color · Dark (default mode) */
+  --color-bg-canvas: #212121;
+  --color-bg-surface: #333333;
+  --color-bg-surface-translucent: #33333333;
+  --color-bg-accent: #57fec1;
+  --color-bg-brand: #921cf3;
+  --color-bg-overlay: #141a1f;
+  --color-bg-placeholder: #929292;
+  --color-bg-avatar-placeholder: #d3d3d3;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #bac3c8;
+  --color-text-tertiary: #929292;
+  --color-text-accent: #57fec1;
+  --color-text-on-accent: #000000;
+  --color-icon-primary: #ffffff;
+  --color-icon-tertiary: #929292;
+  --color-icon-accent: #57fec1;
+  --color-icon-on-accent: #000000;
+  --color-icon-on-brand: #ffffff;
+  --color-border-default: #92929233;
+  --color-border-muted: #333333;
+  --color-border-strong: #929292;
+  --color-border-accent: #57fec1;
+  --color-border-on-media: #ffffff;
+  --color-glow-accent-core: #57fec199;
+  --color-glow-accent-mid: #57fec133;
+  --color-glow-accent-edge: #57fec100;
+  --color-alpha-black-35: #00000059;
+  --color-pressed-overlay: #ffffff1f;
+
+  /* Dimension */
+  --spacing-0: 0px; --spacing-4: 4px; --spacing-6: 6px; --spacing-8: 8px; --spacing-10: 10px;
+  --spacing-12: 12px; --spacing-14: 14px; --spacing-16: 16px; --spacing-24: 24px; --spacing-32: 32px;
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 999px;
+  --border-width-thin: 1px; --border-width-medium: 1.5px; --border-width-thick: 2px;
+
+  /* Typography */
+  --font-family-primary: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-weight-regular: 400; --font-weight-medium: 500; --font-weight-semibold: 600; --font-weight-bold: 700;
+}
+.app[data-mode="light"] {
+  /* Color · Light */
+  --color-bg-canvas: #f3f5f6;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-translucent: #ffffffb8;
+  --color-bg-placeholder: #e4e8eb;
+  --color-text-primary: #141a1f;
+  --color-text-secondary: #4b5661;
+  --color-text-tertiary: #636d76;
+  --color-text-accent: #007a55;
+  --color-icon-primary: #141a1f;
+  --color-icon-tertiary: #636d76;
+  --color-icon-accent: #007a55;
+  --color-border-default: #00000014;
+  --color-border-muted: #e4e8eb;
+  --color-border-strong: #808a93;
+  --color-border-accent: #007a55;
+  --color-glow-accent-core: #57fec173;
+  --color-glow-accent-mid: #57fec126;
+  --color-pressed-overlay: #0000000f;
+}
+
+/* Text styles */
+.t-title-large   { font: var(--font-weight-bold) 26px/32px var(--font-family-primary); }
+.t-body-large    { font: var(--font-weight-regular) 16px/24px var(--font-family-primary); }
+.t-body-large-strong { font: var(--font-weight-semibold) 16px/24px var(--font-family-primary); }
+.t-body-medium   { font: var(--font-weight-regular) 15px/22px var(--font-family-primary); }
+.t-body-small    { font: var(--font-weight-regular) 14px/21px var(--font-family-primary); }
+.t-label-medium  { font: var(--font-weight-regular) 14px/16px var(--font-family-primary); }
+.t-label-medium-strong { font: var(--font-weight-bold) 14px/16px var(--font-family-primary); }
+.t-caption-small { font: var(--font-weight-medium) 10px/15px var(--font-family-primary); }
+
+/* ---------- Stage layout ---------- */
+html, body { height: 100%; }
+body {
+  background: var(--stage-bg);
+  color: var(--stage-fg);
+  font-family: var(--font-ui);
+  padding-inline: 16px;
+  box-sizing: border-box;
+}
+.stage {
+  min-height: 100%;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: center;
+  padding-block: 24px;
+  box-sizing: border-box;
+}
+.panel {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.panel h1 { margin: 0; font-size: 28px; line-height: 34px; font-weight: 700; letter-spacing: -0.01em; }
+.panel h1 span { color: var(--stage-accent); }
+.panel p { margin: 0; color: var(--stage-muted); font-size: 13px; line-height: 20px; }
+.panel .label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stage-muted); }
+.ctrl { display: flex; flex-direction: column; gap: 8px; }
+.switch {
+  display: inline-flex; padding: 4px; gap: 4px;
+  border: 1px solid var(--stage-line); border-radius: 999px; background: var(--stage-panel);
+  width: max-content;
+}
+.switch button {
+  font: 500 13px/18px var(--font-ui); color: var(--stage-fg);
+  border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+}
+.switch button[aria-pressed="true"] { background: var(--stage-fg); color: var(--stage-bg); }
+.switch button:focus-visible, .jump button:focus-visible { outline: 2px solid var(--stage-accent); outline-offset: 2px; }
+.jump { display: flex; flex-wrap: wrap; gap: 6px; }
+.jump button {
+  font: 400 12px/16px var(--font-ui); color: var(--stage-fg); cursor: pointer;
+  border: 1px solid var(--stage-line); background: transparent; padding: 6px 10px; border-radius: 8px;
+}
+.jump button[aria-current="true"] { border-color: var(--stage-fg); font-weight: 600; }
+.panel ul { margin: 0; padding-left: 18px; color: var(--stage-muted); font-size: 13px; line-height: 20px; display: grid; gap: 4px; }
+.panel .src { font-size: 11px; line-height: 16px; color: var(--stage-muted); border-top: 1px solid var(--stage-line); padding-top: 12px; }
+
+.device-slot { flex: none; position: relative; }
+.device {
+  position: absolute; top: 0; left: 0;
+  width: 458px; height: 960px;
+  transform-origin: top left;
+  border-radius: 70px;
+  background: var(--bezel);
+  box-shadow: inset 0 0 0 2px var(--bezel-edge), 0 30px 60px -20px #00000066, 0 12px 24px -12px #00000040;
+  padding: 14px;
+  box-sizing: border-box;
+}
+.device::before { /* side buttons */
+  content: ""; position: absolute; right: -3px; top: 230px; width: 3px; height: 96px; border-radius: 0 2px 2px 0; background: var(--bezel-edge);
+}
+.device::after {
+  content: ""; position: absolute; left: -3px; top: 190px; width: 3px; height: 130px; border-radius: 2px 0 0 2px; background: var(--bezel-edge);
+  box-shadow: 0 -60px 0 -0px var(--bezel-edge);
+}
+
+@media (max-width: 760px) {
+  .stage { flex-direction: column; gap: 20px; align-items: center; }
+  .panel { width: 100%; max-width: 430px; }
+}
+
+/* ---------- App shell ---------- */
+.app {
+  position: relative;
+  width: 430px; height: 932px;
+  border-radius: 56px;
+  overflow: hidden;
+  background: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-primary);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color .25s ease;
+}
+.island {
+  position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+  width: 126px; height: 37px; border-radius: 20px; background: #000; z-index: 30;
+}
+.statusbar {
+  position: absolute; inset: 0 0 auto 0; height: 65px; z-index: 20;
+  color: var(--color-icon-primary);
+  background: linear-gradient(var(--color-bg-canvas) 70%, transparent);
+  pointer-events: none;
+}
+.statusbar .time { position: absolute; left: 57px; top: 22px; font: 600 17px/22px var(--font-sys); color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.statusbar svg { position: absolute; left: 306px; top: 20px; }
+.home-indicator {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  width: 140px; height: 5px; border-radius: 3px; background: var(--color-text-primary); z-index: 25; opacity: .9;
+}
+
+.screen {
+  position: absolute; inset: 0;
+  overflow-y: auto; overflow-x: hidden;
+  padding: 81px 0 120px;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  opacity: 1; transition: opacity .18s ease;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen[hidden] { display: none !important; }
+.screen.entering { opacity: 0; }
+
+.stack { display: flex; flex-direction: column; align-items: stretch; }
+.gap-16 { gap: var(--spacing-16); }
+.gap-24 { gap: var(--spacing-24); }
+
+/* Pressable — shared pressed state */
+.press { cursor: pointer; transition: transform .12s ease, filter .12s ease, background-color .15s ease, color .15s ease; position: relative; }
+.press:active, .press.is-pressed { transform: scale(.95); filter: brightness(.88); }
+.app[data-mode="light"] .press:active, .app[data-mode="light"] .press.is-pressed { filter: brightness(.94); }
+.press:focus-visible { outline: 2px solid var(--color-border-accent); outline-offset: 2px; }
+:where(button.press) { font: inherit; color: inherit; border: 0; background: none; padding: 0; margin: 0; }
+
+.ico { display: block; flex: none; }
+
+/* Top bar */
+.topbar { height: 58px; padding: 0 var(--spacing-16); display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-4); }
+.segmented {
+  display: flex; gap: var(--spacing-10); padding: var(--spacing-10);
+  background: var(--color-bg-surface);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  position: relative;
+}
+.segment {
+  padding: var(--spacing-10); border-radius: var(--radius-full);
+  color: var(--color-text-primary); white-space: nowrap;
+  position: relative; z-index: 1;
+}
+.segment[aria-selected="true"] {
+  background: var(--color-bg-accent); color: var(--color-text-on-accent);
+  padding: var(--spacing-10) var(--spacing-16);
+  font-weight: var(--font-weight-bold);
+}
+.icon-btn {
+  width: 58px; height: 58px; flex: none; box-sizing: border-box;
+  display: grid; place-items: center;
+  background: var(--color-bg-surface);
+  border: var(--border-width-medium) solid var(--color-border-default) !important;
+  border-radius: var(--radius-full);
+  color: var(--color-icon-primary) !important;
+}
+.icon-btn .dot { position: absolute; top: 15px; right: 16px; width: 8px; height: 8px; border-radius: 50%; background: var(--color-bg-accent); box-shadow: 0 0 0 2px var(--color-bg-surface); }
+
+/* Section header */
+.section-header { display: flex; align-items: center; gap: var(--spacing-16); padding: 0 var(--spacing-16); }
+.section-header::before, .section-header::after { content: ""; flex: 1; height: 1px; background: var(--color-border-default); }
+.section-header h2 { margin: 0; color: var(--color-text-primary); white-space: nowrap; }
+
+/* Stories */
+.story-rail { display: flex; gap: var(--spacing-8); overflow-x: auto; padding: 0 var(--spacing-16); scrollbar-width: none; scroll-snap-type: x proximity; }
+.story-rail::-webkit-scrollbar { display: none; }
+.story { width: 90px; flex: none; display: flex; flex-direction: column; align-items: center; gap: var(--spacing-10); scroll-snap-align: start; }
+.story .avatar { width: 70px; height: 70px; position: relative; }
+.story .photo { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; display: block; background: var(--color-bg-avatar-placeholder); }
+.story.own .avatar::before { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 5px var(--color-border-accent); z-index: 1; pointer-events: none; }
+.story .name { color: var(--color-text-primary); text-align: center; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.badge { position: absolute; border-radius: var(--radius-full); display: grid; place-items: center; z-index: 2; }
+.badge-own { left: 45px; top: 45px; width: 28px; height: 28px; background: var(--color-bg-canvas); }
+.badge-own > span { width: 22px; height: 22px; border-radius: 50%; background: var(--color-bg-accent); display: grid; place-items: center; color: var(--color-icon-on-accent); }
+.badge-brand { left: 2px; top: 46px; width: 24px; height: 24px; background: var(--color-bg-brand); color: var(--color-icon-on-brand); }
+.badge-follow { left: 46px; top: 46px; width: 24px; height: 24px; background: var(--color-bg-surface); color: var(--color-icon-primary); }
+.badge-follow.on { background: var(--color-bg-accent); color: var(--color-icon-on-accent); }
+.story .ring-live { position: absolute; inset: -4px; border-radius: 50%; border: 2px dashed var(--color-border-accent); opacity: .0; }
+
+/* Card / Tour */
+.feed { display: flex; flex-direction: column; gap: var(--spacing-16); padding: 0 var(--spacing-16); }
+.card {
+  background: var(--color-bg-surface);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-14) var(--spacing-16);
+  display: flex; flex-direction: column; gap: var(--spacing-12);
+}
+.card-header { display: flex; align-items: center; gap: var(--spacing-10); }
+.author-avatar { width: 32px; height: 32px; position: relative; flex: none; }
+.author-avatar .ph { width: 32px; height: 32px; border-radius: 50%; background: var(--color-bg-avatar-placeholder); }
+.author-avatar .badge { left: -2px; top: 19px; width: 15px; height: 15px; background: var(--color-bg-brand); color: var(--color-icon-on-brand); }
+.author { flex: 1; min-width: 0; color: var(--color-text-primary); }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: var(--spacing-8);
+  padding: var(--spacing-6) var(--spacing-12) var(--spacing-6) var(--spacing-16);
+  border: var(--border-width-thin) solid var(--color-border-accent) !important;
+  border-radius: var(--radius-full);
+  color: var(--color-text-accent) !important;
+  white-space: nowrap;
+}
+.btn-outline.on { background: var(--color-bg-accent) !important; border-color: var(--color-bg-accent) !important; color: var(--color-text-on-accent) !important; }
+.more { color: var(--color-icon-primary) !important; width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; }
+.title-block { display: flex; flex-direction: column; gap: var(--spacing-12); }
+.title-block h3 { margin: 0; color: var(--color-text-primary); text-wrap: balance; }
+.title-block .date { color: var(--color-text-secondary); }
+.carousel {
+  width: 355px; height: 250px; margin: 0 auto; position: relative; overflow: hidden;
+  border-radius: var(--radius-md); background: var(--color-bg-placeholder);
+}
+.carousel .track { display: flex; height: 100%; transition: transform .3s ease; }
+.carousel .slide { width: 355px; height: 250px; flex: none; position: relative; overflow: hidden; }
+.carousel .slide img { position: absolute; left: -7.5px; top: -18px; width: 374px; height: 280px; object-fit: cover; max-width: none; pointer-events: none; }
+.carousel .slide.alt img { filter: saturate(.85) brightness(.95); transform: scaleX(-1); }
+.carousel .brand {
+  position: absolute; left: 310.5px; top: 9px; width: 34px; height: 34px; box-sizing: border-box;
+  border-radius: 50%; background: var(--color-bg-overlay); border: var(--border-width-thick) solid var(--color-border-on-media);
+  display: grid; place-items: center; color: var(--color-icon-on-brand); z-index: 2;
+}
+.pagination { position: absolute; top: 225px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 2; }
+.pagination button { width: 12px; height: 12px; border-radius: 50%; box-sizing: border-box; border: 2px solid var(--color-bg-placeholder); background: transparent; padding: 0; cursor: pointer; }
+.pagination button[aria-current="true"] { background: var(--color-bg-placeholder); }
+.app[data-mode="light"] .pagination button { border-color: #929292; }
+.app[data-mode="light"] .pagination button[aria-current="true"] { background: #929292; }
+.stats { display: flex; align-items: center; gap: var(--spacing-4); }
+.stat { flex: 1; min-width: 0; height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: var(--radius-sm); white-space: nowrap; }
+.stat .k { color: var(--color-text-tertiary); }
+.stat .v { color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.vdiv { width: 1px; height: 32px; background: var(--color-border-default); flex: none; }
+.hdiv { height: 1px; background: var(--color-border-default); }
+.actions { display: flex; align-items: center; justify-content: space-between; gap: var(--spacing-8); }
+.reactions { display: flex; align-items: center; gap: var(--spacing-8); }
+.react { display: inline-flex; align-items: center; gap: var(--spacing-10); color: var(--color-icon-primary) !important; }
+.react + .react { gap: var(--spacing-8); }
+.react .n { color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+.react.on { color: var(--color-icon-accent) !important; }
+.react.on .heart-path { fill: currentColor; }
+.react.pop svg { animation: pop .32s ease; }
+@keyframes pop { 40% { transform: scale(1.3); } }
+.share { color: var(--color-icon-primary) !important; }
+.liked { display: flex; align-items: center; gap: var(--spacing-8); color: var(--color-text-secondary); }
+.avatar-stack { display: flex; }
+.avatar-stack span { width: 22px; height: 22px; box-sizing: border-box; border-radius: 50%; background: var(--color-bg-avatar-placeholder); border: 1.5px solid var(--color-bg-surface); }
+.avatar-stack span + span { margin-left: -6px; }
+
+/* Navigation bar */
+.navbar { height: 58px; padding: 0 var(--spacing-16); display: flex; align-items: center; gap: var(--spacing-4); }
+.navbar .spacer { width: 58px; height: 58px; flex: none; }
+.navbar h1 { flex: 1; margin: 0; text-align: center; color: var(--color-text-primary); }
+
+/* Profile */
+.avatar-xl { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto; background: var(--color-bg-avatar-placeholder); }
+.stats-grid { padding: 0 var(--spacing-16); display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); }
+.stat-tile {
+  background: var(--color-bg-surface); border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-md); padding: var(--spacing-4) var(--spacing-8);
+  display: flex; flex-direction: column; align-items: center;
+}
+.stat-tile .stat { width: 100%; padding: var(--spacing-6) 0; }
+
+/* Empty state */
+.empty {
+  margin: 0 var(--spacing-16);
+  background: var(--color-bg-surface); border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-32) var(--spacing-16) var(--spacing-16);
+  display: flex; flex-direction: column; align-items: center; gap: var(--spacing-24);
+}
+.empty .ico-48 { color: var(--color-icon-accent); }
+.empty .text { display: flex; flex-direction: column; gap: var(--spacing-4); text-align: center; width: 100%; }
+.empty .text strong { color: var(--color-text-primary); font-weight: var(--font-weight-semibold); }
+.empty .text span { color: var(--color-text-secondary); }
+.btn-primary {
+  width: 100%; display: flex; justify-content: center; align-items: center; gap: var(--spacing-8);
+  padding: var(--spacing-14) var(--spacing-24) !important;
+  background: var(--color-bg-accent) !important; color: var(--color-text-on-accent) !important;
+  border-radius: var(--radius-full);
+  text-align: center;
+}
+
+/* Tab bar */
+.tabbar {
+  position: absolute; left: 16px; top: 838px; width: 398px; height: 67px; box-sizing: border-box; z-index: 15;
+  display: flex; align-items: stretch;
+  padding: var(--spacing-4) var(--spacing-8);
+  border: var(--border-width-thin) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  background:
+    radial-gradient(ellipse 199px 67px at var(--glow-x, 50%) 100%, var(--color-glow-accent-core) 0%, var(--color-glow-accent-mid) 50%, var(--color-glow-accent-edge) 100%),
+    var(--color-bg-surface-translucent);
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 0 6px 20px var(--color-alpha-black-35);
+  transition: --glow-x .3s ease;
+}
+.tab {
+  width: 74px; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--spacing-4);
+  padding: var(--spacing-6) 0; border-radius: var(--radius-full);
+  color: var(--color-icon-tertiary) !important;
+}
+.tab .lbl { color: var(--color-text-tertiary); white-space: nowrap; }
+.tab[aria-selected="true"] { color: var(--color-icon-accent) !important; }
+.tab[aria-selected="true"] .lbl { color: var(--color-text-accent); }
+@property --glow-x { syntax: "<percentage>"; inherits: false; initial-value: 50%; }
+
+/* Toast */
+.toast {
+  position: absolute; left: 50%; bottom: 120px; transform: translate(-50%, 12px); z-index: 40;
+  background: var(--color-bg-overlay); color: #ffffff; padding: 10px 16px; border-radius: var(--radius-full);
+  font: var(--font-weight-medium) 13px/18px var(--font-family-primary); white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-add-person" viewBox="0 0 15 15"><path d="M9.375 7C10.4796 7 11.375 6.10457 11.375 5C11.375 3.89543 10.4796 3 9.375 3C8.27043 3 7.375 3.89543 7.375 5C7.375 6.10457 8.27043 7 9.375 7Z" fill="currentColor"/><path d="M5.625 11.875C5.625 9.875 7.3125 8.75 9.375 8.75C11.4375 8.75 13.125 9.875 13.125 11.875H5.625Z" fill="currentColor"/><path d="M3.4375 5.625V9.375M1.5625 7.5H5.3125" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-check-small" viewBox="0 0 15 15"><path d="M3.5 7.8L6.2 10.5L11.5 4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M12 2.5C8.4 2.5 6 5.2 6 8.7V12.3L4.2 15.6C3.8 16.3 4.3 17 5.1 17H18.9C19.7 17 20.2 16.3 19.8 15.6L18 12.3V8.7C18 5.2 15.6 2.5 12 2.5Z" fill="currentColor"/><path d="M9.5 18.6C9.5 19.263 9.76339 19.8989 10.2322 20.3678C10.7011 20.8366 11.337 21.1 12 21.1C12.663 21.1 13.2989 20.8366 13.7678 20.3678C14.2366 19.8989 14.5 19.263 14.5 18.6H9.5Z" fill="currentColor"/></symbol>
+    <symbol id="i-comment" viewBox="0 0 28 28"><path d="M14 5.25C8.16667 5.25 3.5 8.98333 3.5 13.65C3.5 15.9833 4.66667 18.0833 6.65 19.6L5.83333 23.3333L10.2667 21.35C11.4333 21.7 12.7167 21.8167 14 21.8167C19.8333 21.8167 24.5 18.0833 24.5 13.4167C24.5 8.75 19.8333 5.25 14 5.25Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-device" viewBox="0 0 26 26"><path d="M14.0833 10.8333H11.9167C11.0192 10.8333 10.2917 11.5609 10.2917 12.4583V21.125C10.2917 22.0225 11.0192 22.75 11.9167 22.75H14.0833C14.9808 22.75 15.7083 22.0225 15.7083 21.125V12.4583C15.7083 11.5609 14.9808 10.8333 14.0833 10.8333Z" fill="currentColor"/><path d="M9.31666 8.23333C9.79976 7.74855 10.3738 7.36391 11.0059 7.10145C11.6379 6.839 12.3156 6.7039 13 6.7039C13.6844 6.7039 14.3621 6.839 14.9941 7.10145C15.6262 7.36391 16.2002 7.74855 16.6833 8.23333M6.825 5.63333C8.48154 4.03156 10.6957 3.13615 13 3.13615C15.3043 3.13615 17.5184 4.03156 19.175 5.63333" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-fish" viewBox="0 0 16 16"><path d="M2.33334 8C3.66668 6 5.66668 5 7.66668 5C9.66668 5 11.3333 6 12.3333 7L14 5.66667V10.3333L12.3333 9C11.3333 10 9.66668 11 7.66668 11C5.66668 11 3.66668 10 2.33334 8Z" fill="currentColor"/></symbol>
+    <symbol id="i-fishing" viewBox="0 0 26 26"><path d="M7.58332 7.58333C8.77994 7.58333 9.74999 6.61328 9.74999 5.41667C9.74999 4.22005 8.77994 3.25 7.58332 3.25C6.38671 3.25 5.41666 4.22005 5.41666 5.41667C5.41666 6.61328 6.38671 7.58333 7.58332 7.58333Z" fill="currentColor"/><path d="M5.41666 9.20833H8.66666L9.53332 11.375L14.0833 8.66666L14.8417 9.85833L9.42499 13.5417V18.4167H5.41666V9.20833Z" fill="currentColor"/><path d="M9.75 11.9167L22.75 4.33333" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M2.16666 21.125C3.79166 21.125 4.33332 20.0417 5.95832 20.0417C7.58332 20.0417 8.12499 21.125 9.74999 21.125C11.375 21.125 11.9167 20.0417 13.5417 20.0417C15.1667 20.0417 15.7083 21.125 17.3333 21.125C18.9583 21.125 19.5 20.0417 21.125 20.0417" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 28 28"><path class="heart-path" d="M14 23.3333C14 23.3333 5.25001 17.9667 3.26667 12.4833C1.86667 8.63333 4.31667 5.25 8.05001 5.25C10.3833 5.25 12.25 6.53333 14 8.75C15.75 6.53333 17.6167 5.25 19.95 5.25C23.6833 5.25 26.1333 8.63333 24.7333 12.4833C22.75 17.9667 14 23.3333 14 23.3333Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-home" viewBox="0 0 26 26"><path d="M13 3.25L2.70831 12.1333L4.00831 13.65L5.41665 12.4583V21.6667C5.41665 21.954 5.53078 22.2295 5.73395 22.4327C5.93711 22.6359 6.21266 22.75 6.49998 22.75H11.375V16.25H14.625V22.75H19.5C19.7873 22.75 20.0628 22.6359 20.266 22.4327C20.4692 22.2295 20.5833 21.954 20.5833 21.6667V12.4583L21.9916 13.65L23.2916 12.1333L13 3.25Z" fill="currentColor"/></symbol>
+    <symbol id="i-map" viewBox="0 0 26 26"><path d="M3.25 7.04167L9.20833 4.33333V19.5L3.25 22.2083V7.04167ZM10.6167 4.33333L15.3833 6.71667V21.8833L10.6167 19.5V4.33333ZM16.7917 6.71667L22.75 3.79167V18.9583L16.7917 21.8833V6.71667Z" fill="currentColor"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><path d="M12 7.1C13.1598 7.1 14.1 6.1598 14.1 5C14.1 3.8402 13.1598 2.9 12 2.9C10.8402 2.9 9.90002 3.8402 9.90002 5C9.90002 6.1598 10.8402 7.1 12 7.1Z" fill="currentColor"/><path d="M12 14.1C13.1598 14.1 14.1 13.1598 14.1 12C14.1 10.8402 13.1598 9.9 12 9.9C10.8402 9.9 9.90002 10.8402 9.90002 12C9.90002 13.1598 10.8402 14.1 12 14.1Z" fill="currentColor"/><path d="M12 21.1C13.1598 21.1 14.1 20.1598 14.1 19C14.1 17.8402 13.1598 16.9 12 16.9C10.8402 16.9 9.90002 17.8402 9.90002 19C9.90002 20.1598 10.8402 21.1 12 21.1Z" fill="currentColor"/></symbol>
+    <symbol id="i-person" viewBox="0 0 26 26"><path d="M13 12.4583C15.3933 12.4583 17.3334 10.5182 17.3334 8.125C17.3334 5.73177 15.3933 3.79167 13 3.79167C10.6068 3.79167 8.66669 5.73177 8.66669 8.125C8.66669 10.5182 10.6068 12.4583 13 12.4583Z" fill="currentColor"/><path d="M4.33331 22.2083C4.33331 17.875 8.23331 15.1667 13 15.1667C17.7666 15.1667 21.6666 17.875 21.6666 22.2083H4.33331Z" fill="currentColor"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 20 20"><path d="M10 4.16667V15.8333M4.16669 10H15.8334" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 20 20"><path d="M4.5 10.5L8.3 14.2L15.5 6.3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path d="M15.5 15.5L21 21M10.5 4C12.2239 4 13.8772 4.68482 15.0962 5.90381C16.3152 7.12279 17 8.77609 17 10.5C17 12.2239 16.3152 13.8772 15.0962 15.0962C13.8772 16.3152 12.2239 17 10.5 17C8.77609 17 7.12279 16.3152 5.90381 15.0962C4.68482 13.8772 4 12.2239 4 10.5C4 8.77609 4.68482 7.12279 5.90381 5.90381C7.12279 4.68482 8.77609 4 10.5 4Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-vampire" viewBox="0 0 18 18"><path d="M4.875 4.125L6.975 6H11.025L13.125 4.125V8.775C13.125 11.175 11.4 12.975 9 14.25C6.6 12.975 4.875 11.175 4.875 8.775V4.125Z" fill="currentColor"/><path d="M9.00002 10.5C9.74561 10.5 10.35 9.89558 10.35 9.15C10.35 8.40441 9.74561 7.8 9.00002 7.8C8.25444 7.8 7.65002 8.40441 7.65002 9.15C7.65002 9.89558 8.25444 10.5 9.00002 10.5Z" fill="#921CF3"/></symbol>
+    <symbol id="i-share" viewBox="0 0 28 28"><path d="M10.15 8.98333L12.8334 6.3V17.5C12.8334 18.2 13.3 18.6667 14 18.6667C14.7 18.6667 15.1667 18.2 15.1667 17.5V6.3L17.85 8.98333C18.3167 9.45 19.0167 9.45 19.4834 8.98333C19.95 8.51667 19.95 7.81667 19.4834 7.35L14.8167 2.68333C14.7 2.56667 14.5834 2.45 14.4667 2.45C14.2334 2.33333 13.8834 2.33333 13.5334 2.45C13.4167 2.45 13.3 2.56667 13.1834 2.68333L8.51671 7.35C8.05004 7.81667 8.05004 8.51667 8.51671 8.98333C8.98337 9.45 9.68337 9.45 10.15 8.98333ZM24.5 16.3333C23.8 16.3333 23.3334 16.8 23.3334 17.5V22.1667C23.3334 22.8667 22.8667 23.3333 22.1667 23.3333H5.83337C5.13337 23.3333 4.66671 22.8667 4.66671 22.1667V17.5C4.66671 16.8 4.20004 16.3333 3.50004 16.3333C2.80004 16.3333 2.33337 16.8 2.33337 17.5V22.1667C2.33337 24.15 3.85004 25.6667 5.83337 25.6667H22.1667C24.15 25.6667 25.6667 24.15 25.6667 22.1667V17.5C25.6667 16.8 25.2 16.3333 24.5 16.3333Z" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<main class="stage">
+  <section class="panel" aria-label="Prototípus vezérlők">
+    <div>
+      <h1>Vampire<span>.</span></h1>
+      <p>Kattintható iOS prototípus a Figma „Screens” oldal képernyőiből, a design system tokenjeivel.</p>
+    </div>
+    <div class="ctrl">
+      <span class="label">Téma</span>
+      <div class="switch" role="group" aria-label="App téma">
+        <button type="button" id="mode-dark" data-mode="dark" aria-pressed="true">Dark</button>
+        <button type="button" id="mode-light" data-mode="light" aria-pressed="false">Light</button>
+      </div>
+    </div>
+    <div class="ctrl">
+      <span class="label">Képernyő</span>
+      <div class="jump" id="jump">
+        <button type="button" data-go="home">Kezdőlap</button>
+        <button type="button" data-go="following">Követések</button>
+        <button type="button" data-go="profile">Profilom</button>
+      </div>
+    </div>
+    <div class="ctrl">
+      <span class="label">Próbáld ki</span>
+      <ul>
+        <li>Tab bar: öt fül, a fény követi az aktív fület</li>
+        <li>Neked ajánlott / Követések váltó</li>
+        <li>Követem gomb, szív, karusszel pöttyök</li>
+        <li>Horgásztúra indítása a profilon</li>
+      </ul>
+    </div>
+    <p class="src">Forrás: Figma · Home / For You, Profile / Empty (Dark és Light). Felfedezés, Rögzítés és Eszközök még nincs megtervezve, ezek helyőrzők.</p>
+  </section>
+
+  <div class="device-slot" id="slot">
+    <div class="device" id="device">
+      <div class="app" id="app" data-mode="dark">
+        <div class="island" aria-hidden="true"></div>
+        <div class="statusbar" aria-hidden="true">
+          <span class="time" id="clock">20:16</span>
+          <svg width="90" height="24" viewBox="0 0 90 24" fill="none">
+            <rect x="0" y="8" width="3.6" height="5" rx="1" fill="currentColor"/>
+            <rect x="5.5" y="6" width="3.6" height="7" rx="1" fill="currentColor"/>
+            <rect x="11" y="4" width="3.6" height="9" rx="1" fill="currentColor"/>
+            <rect x="16.5" y="1.5" width="3.6" height="11.5" rx="1" fill="currentColor"/>
+            <path d="M30.5 6.4C33.6 3.6 38.4 3.6 41.5 6.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M32.9 9.1C34.7 7.6 37.3 7.6 39.1 9.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="36" cy="11.5" r="1.8" fill="currentColor"/>
+            <rect x="56" y="1.5" width="27" height="13" rx="4" fill="currentColor"/>
+            <path d="M85 6V10.5C86.2 10.2 87.2 9.2 87.2 8.2C87.2 7.2 86.2 6.3 85 6Z" fill="currentColor"/>
+            <text x="69.5" y="11.9" text-anchor="middle" font-family="-apple-system, system-ui, sans-serif" font-size="11.5" font-weight="700" fill="var(--color-bg-surface)">97</text>
+          </svg>
+        </div>
+
+        <!-- Home / For You -->
+        <section class="screen" id="screen-home" data-screen="home" aria-label="Kezdőlap">
+          <div class="stack gap-16">
+            <div class="topbar">
+              <div class="segmented" role="tablist" aria-label="Feed szűrő">
+                <button class="segment t-label-medium press" role="tab" id="seg-foryou" data-seg="foryou" aria-selected="true">Neked ajánlott</button>
+                <button class="segment t-label-medium press" role="tab" id="seg-following" data-seg="following" aria-selected="false">Követések</button>
+              </div>
+              <button class="icon-btn press" id="btn-notif" aria-label="Értesítések" data-toast="Nincs új értesítés">
+                <svg class="ico" width="24" height="24"><use href="#i-bell"/></svg><span class="dot"></span>
+              </button>
+              <button class="icon-btn press" id="btn-search" aria-label="Keresés" data-toast="A keresés még nincs megtervezve">
+                <svg class="ico" width="24" height="24"><use href="#i-search"/></svg>
+              </button>
+            </div>
+
+            <div id="feed-foryou" class="stack gap-16">
+              <div class="stack gap-16">
+                <div class="section-header"><h2 class="t-label-medium-strong">Aktív túrák</h2></div>
+                <div class="story-rail" id="stories">
+                  <button class="story own press" data-toast="Saját túrád megnyitása">
+                    <span class="avatar"><img class="photo" src="__IMG_st1__" alt=""><span class="badge badge-own"><span><svg class="ico" width="16" height="16"><use href="#i-fish"/></svg></span></span></span>
+                    <span class="name t-body-small">Saját túrám</span>
+                  </button>
+                  <button class="story press" data-story>
+                    <span class="avatar"><img class="photo" src="__IMG_st2__" alt=""><span class="badge badge-brand"><svg class="ico" width="18" height="18"><use href="#i-vampire"/></svg></span><span class="badge badge-follow"><svg class="ico" width="15" height="15"><use href="#i-add-person"/></svg></span></span>
+                    <span class="name t-body-small">Kapás Vadász</span>
+                  </button>
+                  <button class="story press" data-story>
+                    <span class="avatar"><img class="photo" src="__IMG_st3__" alt=""><span class="badge badge-brand"><svg class="ico" width="18" height="18"><use href="#i-vampire"/></svg></span><span class="badge badge-follow"><svg class="ico" width="15" height="15"><use href="#i-add-person"/></svg></span></span>
+                    <span class="name t-body-small">Madár Zoli</span>
+                  </button>
+                  <button class="story press" data-story>
+                    <span class="avatar"><img class="photo" src="__IMG_st4__" alt=""><span class="badge badge-brand"><svg class="ico" width="18" height="18"><use href="#i-vampire"/></svg></span><span class="badge badge-follow"><svg class="ico" width="15" height="15"><use href="#i-add-person"/></svg></span></span>
+                    <span class="name t-body-small">Hajek Péter</span>
+                  </button>
+                  <button class="story press" data-story>
+                    <span class="avatar"><img class="photo" src="__IMG_st5__" alt=""><span class="badge badge-brand"><svg class="ico" width="18" height="18"><use href="#i-vampire"/></svg></span><span class="badge badge-follow"><svg class="ico" width="15" height="15"><use href="#i-add-person"/></svg></span></span>
+                    <span class="name t-body-small">Kiss Zoltán</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="stack gap-16">
+                <div class="section-header"><h2 class="t-label-medium-strong">Befejezett túrák</h2></div>
+                <div class="feed" id="feed"></div>
+              </div>
+            </div>
+
+            <div id="feed-following" hidden>
+              <div class="empty">
+                <svg class="ico ico-48" width="48" height="48" viewBox="0 0 26 26"><use href="#i-add-person" x="1" y="1" width="24" height="24"/></svg>
+                <div class="text">
+                  <strong class="t-body-large-strong">Még nem követsz senkit.</strong>
+                  <span class="t-body-medium">Kövess horgászokat, és itt látod a túráikat.</span>
+                </div>
+                <button class="btn-primary t-body-large-strong press" data-go="explore">Horgászok felfedezése</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Profile / Empty -->
+        <section class="screen" id="screen-profile" data-screen="profile" aria-label="Profilom" hidden>
+          <div class="stack gap-24">
+            <div class="navbar">
+              <span class="spacer"></span>
+              <h1 class="t-title-large">Dobos Gábor</h1>
+              <button class="icon-btn press" aria-label="Továbbiak" data-toast="Profil beállítások hamarosan"><svg class="ico" width="24" height="24"><use href="#i-more"/></svg></button>
+            </div>
+            <img class="avatar-xl" src="__IMG_profile__" alt="Dobos Gábor profilképe">
+            <div class="stats-grid">
+              <div class="stat-tile"><div class="stat"><span class="k t-body-medium">Követők</span><span class="v t-body-large-strong">0</span></div></div>
+              <div class="stat-tile"><div class="stat"><span class="k t-body-medium">Követett</span><span class="v t-body-large-strong" id="following-count">0</span></div></div>
+              <div class="stat-tile"><div class="stat"><span class="k t-body-medium">Túrák</span><span class="v t-body-large-strong">0</span></div></div>
+              <div class="stat-tile"><div class="stat"><span class="k t-body-medium">Fogások</span><span class="v t-body-large-strong">0</span></div></div>
+            </div>
+            <div class="stack gap-16">
+              <div class="section-header"><h2 class="t-label-medium-strong">Horgásztúrák</h2></div>
+              <div class="empty">
+                <svg class="ico ico-48" width="48" height="48"><use href="#i-fishing"/></svg>
+                <div class="text">
+                  <strong class="t-body-large-strong">Még nem rögzítettél egyetlen túrát sem.</strong>
+                  <span class="t-body-medium">Kezdd el az első horgászatodat.</span>
+                </div>
+                <button class="btn-primary t-body-large-strong press" data-go="record">Horgásztúra indítása</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Placeholders -->
+        <section class="screen" data-screen="explore" aria-label="Felfedezés" hidden>
+          <div class="stack gap-24">
+            <div class="navbar"><span class="spacer"></span><h1 class="t-title-large">Felfedezés</h1><span class="spacer"></span></div>
+            <div class="empty">
+              <svg class="ico ico-48" width="48" height="48"><use href="#i-map"/></svg>
+              <div class="text"><strong class="t-body-large-strong">Ez a képernyő még nincs megtervezve.</strong><span class="t-body-medium">Térkép és horgászhelyek kerülnek ide.</span></div>
+              <button class="btn-outline t-body-small press" data-go="home">Vissza a kezdőlapra</button>
+            </div>
+          </div>
+        </section>
+        <section class="screen" data-screen="record" aria-label="Rögzítés" hidden>
+          <div class="stack gap-24">
+            <div class="navbar"><span class="spacer"></span><h1 class="t-title-large">Rögzítés</h1><span class="spacer"></span></div>
+            <div class="empty">
+              <svg class="ico ico-48" width="48" height="48"><use href="#i-fishing"/></svg>
+              <div class="text"><strong class="t-body-large-strong">Ez a képernyő még nincs megtervezve.</strong><span class="t-body-medium">Itt indul és fut majd a horgásztúra rögzítése.</span></div>
+              <button class="btn-outline t-body-small press" data-go="home">Vissza a kezdőlapra</button>
+            </div>
+          </div>
+        </section>
+        <section class="screen" data-screen="devices" aria-label="Eszközök" hidden>
+          <div class="stack gap-24">
+            <div class="navbar"><span class="spacer"></span><h1 class="t-title-large">Eszközök</h1><span class="spacer"></span></div>
+            <div class="empty">
+              <svg class="ico ico-48" width="48" height="48"><use href="#i-device"/></svg>
+              <div class="text"><strong class="t-body-large-strong">Ez a képernyő még nincs megtervezve.</strong><span class="t-body-medium">A párosított Vampire eszközök listája jön ide.</span></div>
+              <button class="btn-outline t-body-small press" data-go="home">Vissza a kezdőlapra</button>
+            </div>
+          </div>
+        </section>
+
+        <nav class="tabbar" id="tabbar" role="tablist" aria-label="Fő navigáció">
+          <button class="tab press" role="tab" data-tab="home" aria-selected="true"><svg class="ico" width="26" height="26"><use href="#i-home"/></svg><span class="lbl t-caption-small">Kezdőlap</span></button>
+          <button class="tab press" role="tab" data-tab="explore" aria-selected="false"><svg class="ico" width="26" height="26"><use href="#i-map"/></svg><span class="lbl t-caption-small">Felfedezés</span></button>
+          <button class="tab press" role="tab" data-tab="record" aria-selected="false"><svg class="ico" width="26" height="26"><use href="#i-fishing"/></svg><span class="lbl t-caption-small">Rögzítés</span></button>
+          <button class="tab press" role="tab" data-tab="devices" aria-selected="false"><svg class="ico" width="26" height="26"><use href="#i-device"/></svg><span class="lbl t-caption-small">Eszközök</span></button>
+          <button class="tab press" role="tab" data-tab="profile" aria-selected="false"><svg class="ico" width="26" height="26"><use href="#i-person"/></svg><span class="lbl t-caption-small">Profilom</span></button>
+        </nav>
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+        <div class="home-indicator" aria-hidden="true"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<template id="card-tpl">
+  <article class="card">
+    <div class="card-header">
+      <span class="author-avatar"><span class="ph" style="display:block"></span><span class="badge"><svg class="ico" width="12" height="12"><use href="#i-vampire"/></svg></span></span>
+      <span class="author t-body-large">Team Rebi Zoli</span>
+      <button class="btn-outline t-body-small press" data-follow><span class="txt">Követem</span><svg class="ico" width="20" height="20"><use href="#i-plus"/></svg></button>
+      <button class="more press" aria-label="Továbbiak" data-toast="Túra menü hamarosan"><svg class="ico" width="24" height="24"><use href="#i-more"/></svg></button>
+    </div>
+    <div class="title-block">
+      <h3 class="t-title-large">Horgásztúra Dunavarsány közelében</h3>
+      <span class="date t-body-small">2026. okt. 9–10.</span>
+    </div>
+    <div class="carousel">
+      <div class="track">
+        <div class="slide"><img src="__IMG_card__" alt="Ponty fogás a Duna-parton"></div>
+        <div class="slide alt"><img src="__IMG_card__" alt=""></div>
+        <div class="slide"><img src="__IMG_card__" alt="" style="object-position: 30% 50%; transform: scale(1.25)"></div>
+      </div>
+      <span class="brand"><svg class="ico" width="22" height="22"><use href="#i-vampire"/></svg></span>
+      <div class="pagination"><button aria-label="1. kép" aria-current="true"></button><button aria-label="2. kép"></button><button aria-label="3. kép"></button></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><span class="k t-body-medium">Darabszám</span><span class="v t-body-large-strong">19 db</span></div>
+      <span class="vdiv"></span>
+      <div class="stat"><span class="k t-body-medium">Összsúly</span><span class="v t-body-large-strong">175 kg</span></div>
+      <span class="vdiv"></span>
+      <div class="stat"><span class="k t-body-medium">Átlagsúly</span><span class="v t-body-large-strong">9,2 kg</span></div>
+    </div>
+    <div class="hdiv"></div>
+    <div class="actions">
+      <div class="reactions">
+        <button class="react press" data-like aria-pressed="false" aria-label="Kedvelem"><svg class="ico" width="28" height="28"><use href="#i-heart"/></svg><span class="n t-body-large">3</span></button>
+        <button class="react press" aria-label="Hozzászólások" data-toast="Hozzászólások hamarosan"><svg class="ico" width="28" height="28"><use href="#i-comment"/></svg><span class="n t-body-large">0</span></button>
+      </div>
+      <button class="share press" aria-label="Megosztás" data-toast="Megosztás hamarosan"><svg class="ico" width="28" height="28"><use href="#i-share"/></svg></button>
+    </div>
+    <div class="hdiv"></div>
+    <div class="liked t-body-medium"><span class="avatar-stack"><span></span><span></span><span></span></span><span class="liked-txt">Antho. és további 2 ember kedveli</span></div>
+  </article>
+</template>
+
+<script>
+(function () {
+  var app = document.getElementById('app');
+  var device = document.getElementById('device');
+  var slot = document.getElementById('slot');
+  var tabbar = document.getElementById('tabbar');
+  var toastEl = document.getElementById('toast');
+  var current = 'home';
+  var tabs = ['home', 'explore', 'record', 'devices', 'profile'];
+
+  // Feed cards (3, as in Figma)
+  var feed = document.getElementById('feed');
+  var tpl = document.getElementById('card-tpl');
+  for (var i = 0; i < 3; i++) feed.appendChild(tpl.content.cloneNode(true));
+
+  // Fit the phone to the stage
+  var W = 458, H = 960;
+  function fit() {
+    var narrow = window.innerWidth <= 760;
+    var availW = Math.min(window.innerWidth - 32, 600);
+    var availH = narrow ? 99999 : window.innerHeight - 48;
+    var s = Math.min(1, availW / W, availH / H);
+    s = Math.max(s, 0.3);
+    device.style.transform = 'scale(' + s + ')';
+    slot.style.width = (W * s) + 'px';
+    slot.style.height = (H * s) + 'px';
+  }
+  window.addEventListener('resize', fit); fit();
+
+  // Clock
+  function tick() {
+    var d = new Date();
+    document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+  tick(); setInterval(tick, 15000);
+
+  // Toast
+  var tt;
+  function toast(msg) {
+    toastEl.textContent = msg; toastEl.classList.add('show');
+    clearTimeout(tt); tt = setTimeout(function () { toastEl.classList.remove('show'); }, 1600);
+  }
+
+  // Theme
+  function setMode(m, save) {
+    app.dataset.mode = m;
+    document.querySelectorAll('.switch button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.mode === m)); });
+    if (save) { try { localStorage.setItem('vampire-mode', m); } catch (e) {} }
+  }
+  try { var saved = localStorage.getItem('vampire-mode'); if (saved === 'light' || saved === 'dark') setMode(saved); } catch (e) {}
+  document.querySelectorAll('.switch button').forEach(function (b) {
+    b.addEventListener('click', function () { setMode(b.dataset.mode, true); });
+  });
+
+  // Navigation
+  function go(name) {
+    var seg = null;
+    if (name === 'following' || name === 'foryou') { seg = name; name = 'home'; }
+    if (name !== current) {
+      document.querySelectorAll('.screen').forEach(function (s) { s.hidden = s.dataset.screen !== name; });
+      var el = document.querySelector('.screen[data-screen="' + name + '"]');
+      el.classList.add('entering'); el.scrollTop = 0;
+      requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.remove('entering'); }); });
+      current = name;
+    }
+    document.querySelectorAll('.tab').forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.tab === name)); });
+    var idx = tabs.indexOf(name);
+    tabbar.style.setProperty('--glow-x', (((idx * 74 + 37 + 8) / 398) * 100).toFixed(1) + '%');
+    if (seg) setSeg(seg);
+    document.querySelectorAll('#jump button').forEach(function (b) {
+      var on = b.dataset.go === (name === 'home' ? (document.getElementById('seg-following').getAttribute('aria-selected') === 'true' ? 'following' : 'home') : name);
+      b.setAttribute('aria-current', String(on));
+    });
+  }
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () { go(t.dataset.tab); });
+  });
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest('[data-go]');
+    if (g) { go(g.dataset.go); return; }
+    var t = e.target.closest('[data-toast]');
+    if (t) toast(t.dataset.toast);
+  });
+
+  // Segmented control
+  function setSeg(k) {
+    document.querySelectorAll('.segment').forEach(function (s) {
+      var on = s.dataset.seg === k;
+      s.setAttribute('aria-selected', String(on));
+      s.classList.toggle('t-label-medium-strong', on);
+      s.classList.toggle('t-label-medium', !on);
+    });
+    document.getElementById('feed-foryou').hidden = k !== 'foryou';
+    document.getElementById('feed-following').hidden = k !== 'following';
+    if (current === 'home') {
+      document.querySelectorAll('#jump button').forEach(function (b) { b.setAttribute('aria-current', String(b.dataset.go === (k === 'following' ? 'following' : 'home'))); });
+    }
+  }
+  document.querySelectorAll('.segment').forEach(function (s) {
+    s.addEventListener('click', function () { setSeg(s.dataset.seg); document.getElementById('screen-home').scrollTop = 0; });
+  });
+  setSeg('foryou');
+
+  // Follow buttons (all cards are by the same team, so they stay in sync)
+  var following = false;
+  function syncFollow() {
+    document.querySelectorAll('[data-follow]').forEach(function (b) {
+      b.classList.toggle('on', following);
+      b.querySelector('.txt').textContent = following ? 'Követed' : 'Követem';
+      b.querySelector('use').setAttribute('href', following ? '#i-check' : '#i-plus');
+      b.setAttribute('aria-pressed', String(following));
+    });
+    document.getElementById('following-count').textContent = following ? '1' : '0';
+  }
+  feed.addEventListener('click', function (e) {
+    var f = e.target.closest('[data-follow]');
+    if (f) { following = !following; syncFollow(); toast(following ? 'Követed: Team Rebi Zoli' : 'Már nem követed'); return; }
+    var l = e.target.closest('[data-like]');
+    if (l) {
+      var on = l.getAttribute('aria-pressed') !== 'true';
+      l.setAttribute('aria-pressed', String(on));
+      l.classList.toggle('on', on);
+      l.querySelector('.n').textContent = on ? '4' : '3';
+      l.closest('.card').querySelector('.liked-txt').textContent = on ? 'Te, Antho. és további 2 ember kedveli' : 'Antho. és további 2 ember kedveli';
+      l.classList.remove('pop'); void l.offsetWidth; if (on) l.classList.add('pop');
+      return;
+    }
+    var dot = e.target.closest('.pagination button');
+    if (dot) { showSlide(dot.closest('.carousel'), Array.prototype.indexOf.call(dot.parentNode.children, dot)); }
+  });
+  syncFollow();
+
+  // Carousel: dots + horizontal drag/swipe
+  function showSlide(c, i) {
+    c.dataset.i = i;
+    c.querySelector('.track').style.transform = 'translateX(' + (-i * 355) + 'px)';
+    c.querySelectorAll('.pagination button').forEach(function (b, j) { b.setAttribute('aria-current', String(j === i)); });
+  }
+  document.querySelectorAll('.carousel').forEach(function (c) {
+    var x0 = null;
+    c.addEventListener('pointerdown', function (e) { if (!e.target.closest('button')) x0 = e.clientX; });
+    c.addEventListener('pointerup', function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0, i = +(c.dataset.i || 0); x0 = null;
+      if (Math.abs(dx) > 20) showSlide(c, Math.max(0, Math.min(2, i + (dx < 0 ? 1 : -1))));
+    });
+    c.addEventListener('pointerleave', function () { x0 = null; });
+  });
+
+  // Story follow badges
+  document.getElementById('stories').addEventListener('click', function (e) {
+    var s = e.target.closest('[data-story]');
+    if (!s) return;
+    var b = s.querySelector('.badge-follow');
+    var on = !b.classList.contains('on');
+    b.classList.toggle('on', on);
+    b.querySelector('use').setAttribute('href', on ? '#i-check-small' : '#i-add-person');
+    toast((on ? 'Követed: ' : 'Már nem követed: ') + s.querySelector('.name').textContent);
+  });
+
+  go('home');
+})();
+</script>
